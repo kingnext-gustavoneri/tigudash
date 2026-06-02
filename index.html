@@ -92,6 +92,11 @@
   /* kpi */
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:14px}
   .kpi{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden}
+  /* logo central da dashboard (estilo Leona) */
+  .dash-header{text-align:center;margin:2px 0 22px}
+  .dash-logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:34px;letter-spacing:-1.5px;color:var(--accent);text-shadow:0 0 34px var(--glow);line-height:1}
+  .dash-sub{font-size:13px;color:var(--muted);margin-top:5px}
+  @media(max-width:480px){.dash-header{margin:0 0 16px}.dash-logo{font-size:27px}.dash-sub{font-size:12px}}
   .kpi .k-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;margin-bottom:12px}
   .kpi .k-ic svg{width:18px;height:18px}
   .kpi .k-ic.lime{background:rgba(188,232,74,.14);color:var(--accent)}
@@ -999,6 +1004,11 @@
 
     <!-- DASHBOARD -->
     <section class="view on" id="v-dash">
+      <!-- Logo central (estilo Leona) -->
+      <div class="dash-header">
+        <div class="dash-logo">Tigudash</div>
+        <div class="dash-sub">Visão geral do seu negócio</div>
+      </div>
       <!-- Hero: Como está hoje (semáforo) -->
       <div class="hero-today" id="heroToday">
         <div class="hero-left">
@@ -3607,6 +3617,7 @@ function switchView(v){
     afiliados:['Indique e Ganhe','Compartilhe seu link, convide amigos para o Tigudash e acompanhe quanto você já ganhou.'],
     webhook:['Webhook de Vendas','Notificações instantâneas de venda via webhook — configure, teste e acompanhe ao vivo.']};
   $('#view-title').textContent=(titles[v]||['',''])[0]; $('#view-sub').textContent=(titles[v]||['',''])[1];
+  { const tb=document.querySelector('.topbar'); if(tb) tb.style.display = (v==='dash')?'none':''; }
   ui.view=v; saveUI();
   syncPeriodBars();
   if(v==='cofre') renderVault();

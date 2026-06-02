@@ -1807,6 +1807,8 @@ const META_APP_ID = '';
 const SUPABASE_URL = 'https://mazcikaibqlyqtwzozzg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hemNpa2FpYnFseXF0d3pvenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MDEyNDMsImV4cCI6MjA5NTk3NzI0M30.iVWUIqjvNGOTmDYc0n0pJ7ErSvK7AsuxhQ5L6ExCp9M';
 const SUPA_ENABLED = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+/* Domínio oficial — link de indicação compartilhável sempre aponta pra cá */
+const SITE_BASE = 'https://tigudash.com';
 /* ===================================================================
    LOGIN LOCAL (funciona JÁ, sem configurar nada)
    Com ENABLE_LOGIN = true o painel pede login/senha e guarda as contas
@@ -4781,7 +4783,7 @@ function localSignOut(){ localSetSession(''); location.reload(); }
 
 /* ===================== INDIQUE E GANHE (afiliados) ===================== */
 function refCodeFor(email){ email=(email||'').toLowerCase(); if(!email) return 'TIGUDASH'; return ('TG'+lhash(email).slice(1,7)).toUpperCase().replace(/[^A-Z0-9]/g,'').padEnd(8,'X').slice(0,8); }
-function refLinkFor(code){ try{ return location.origin + location.pathname + '?ref=' + code; }catch(e){ return '?ref='+code; } }
+function refLinkFor(code){ return SITE_BASE + '/?ref=' + code; }
 function refMaskEmail(em){ em=String(em||''); const i=em.indexOf('@'); if(i<1) return em; const u=em.slice(0,i), d=em.slice(i); const head=u.slice(0,2); return head + (u.length>2?'•••':'') + d; }
 /* lista de quem usou o seu código (modo local: lê as contas deste aparelho) */
 function myReferrals(){

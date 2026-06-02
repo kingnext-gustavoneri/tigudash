@@ -117,6 +117,8 @@
 /* ====== CONFIG (mesma do app principal) ====== */
 const SUPABASE_URL = 'https://mazcikaibqlyqtwzozzg.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hemNpa2FpYnFseXF0d3pvenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MDEyNDMsImV4cCI6MjA5NTk3NzI0M30.iVWUIqjvNGOTmDYc0n0pJ7ErSvK7AsuxhQ5L6ExCp9M';
+/* Domínio oficial — usado no link de indicação compartilhável (sempre tigudash.com) */
+const SITE_BASE = 'https://tigudash.com';
 const REF_REWARD = 25;
 const TIERS = [
   {name:'Bronze', min:0,  color:'#cd7f32', icon:'🥉', perk:'R$ 25 por indicado ativo'},
@@ -143,7 +145,7 @@ async function boot(){
   const email=session.user.email||'';
   const username=(session.user.user_metadata&&session.user.user_metadata.username)||'';
   const code=username||refCodeFor(email);
-  const link=appBase()+'?ref='+code;
+  const link=SITE_BASE+'/?ref='+code;
   let refs=[];
   try{ const {data,error}=await supa.rpc('referral_stats'); if(!error && Array.isArray(data)) refs=data.map(r=>({email:r.email,joined:r.joined,active:!!r.active})); }catch(e){}
   render({email,code,link,refs});

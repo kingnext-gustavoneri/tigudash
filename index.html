@@ -845,6 +845,20 @@
   .ptab:hover{color:var(--text)}
   .ptab.on{background:var(--surface2);color:var(--text)}
   .pipe-board{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}
+  /* ===== Produto: foto/link/dados ===== */
+  .f-opt{color:var(--faint);font-weight:400;font-size:11px}
+  .field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font:inherit;font-size:14px;resize:vertical;min-height:64px}
+  .field textarea:focus{outline:none;border-color:var(--accent)}
+  .f-photo-row{display:flex;gap:14px;align-items:center}
+  .f-photo-prev{width:66px;height:66px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);display:grid;place-items:center;color:var(--faint);overflow:hidden;flex:none}
+  .f-photo-prev svg{width:24px;height:24px}
+  .f-photo-prev img{width:100%;height:100%;object-fit:cover}
+  .f-photo-actions{display:flex;flex-direction:column;gap:7px;align-items:flex-start}
+  .prod-cell{display:flex;align-items:center;gap:10px}
+  .prod-thumb{width:30px;height:30px;border-radius:7px;object-fit:cover;border:1px solid var(--border);flex:none}
+  .prod-link{color:var(--muted);display:inline-flex;transition:.15s}
+  .prod-link:hover{color:var(--accent)}
+  .prod-link svg{width:15px;height:15px}
   .pipe-col{flex:0 0 232px;background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;max-height:74vh;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
   .pipe-col-head{display:flex;align-items:center;gap:7px;padding:11px 12px;border-bottom:1px solid var(--border2);border-radius:14px 14px 0 0}
   .pipe-col-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;flex:1;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1053,6 +1067,7 @@
       <button data-v="vendas"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span> Vendas</button>
       <button data-v="despesas"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/></svg></span> Despesas</button>
       <button data-v="produtos"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span> Produtos</button>
+      <button data-v="esteira"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span> Esteira de validação</button>
       <div class="nav-section">Ferramentas</div>
       <button data-v="metaads"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span> Meta Ads</button>
       <button data-v="webhook"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span> Webhook</button>
@@ -1464,16 +1479,8 @@
 
     <!-- PRODUTOS -->
     <section class="view" id="v-produtos">
-      <div class="sec-head">
-        <div class="vtabs">
-          <button class="ptab on" data-prodtab="catalogo">Catálogo</button>
-          <button class="ptab" data-prodtab="esteira">Esteira de testes</button>
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn" id="addProd">+ Novo produto</button>
-          <button class="btn ghost" id="addStage" style="display:none">+ Coluna</button>
-          <button class="btn" id="addPipeCard" style="display:none">+ Produto na esteira</button>
-        </div>
+      <div class="sec-head" style="justify-content:flex-end">
+        <button class="btn" id="addProd">+ Novo produto</button>
       </div>
       <div id="prodCatalog">
       <div class="card" style="padding:8px 22px" id="prodTableCard">
@@ -1492,7 +1499,15 @@
         <button class="btn" onclick="prodModal()">+ Cadastrar primeiro produto</button>
       </div>
       </div><!-- /#prodCatalog -->
-      <div id="pipeBoard" style="display:none"></div>
+    </section>
+
+    <!-- ESTEIRA DE VALIDAÇÃO -->
+    <section class="view" id="v-esteira">
+      <div class="sec-head" style="justify-content:flex-end;gap:8px">
+        <button class="btn ghost" id="addStage">+ Coluna</button>
+        <button class="btn" id="addPipeCard">+ Produto na esteira</button>
+      </div>
+      <div id="pipeBoard"></div>
     </section>
 
     <!-- CALENDÁRIO -->
@@ -1754,7 +1769,6 @@
 <!-- MODAL -->
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
-<button id="tourHelp" class="tour-help" title="Rever o guia" onclick="startTour()">?</button>
 <input type="file" id="fileInput" accept="application/json" style="display:none">
 
 <datalist id="dl-operadora"><option>Claro</option><option>Vivo</option><option>TIM</option><option>Oi</option></datalist>
@@ -2237,7 +2251,7 @@ function renderProducts(){
     const ps=db.sales.filter(s=>s.product===p.name);
     const tot=ps.reduce((a,s)=>a+s.value,0);
     return `<tr class="clickable" data-edit-prod="${p.id}">
-      <td>${esc(p.name)}</td>
+      <td><div class="prod-cell">${p.photo?`<img class="prod-thumb" src="${p.photo}" alt="">`:''}<span>${esc(p.name)}</span>${p.link?`<a class="prod-link" href="${esc(p.link)}" target="_blank" rel="noopener" title="Abrir arquivo" onclick="event.stopPropagation()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></a>`:''}</div></td>
       <td class="num" style="text-align:right">${brl(p.price)}</td>
       <td class="num" style="text-align:right">${ps.length}</td>
       <td class="num pos" style="text-align:right">${brl(tot)}</td>
@@ -2260,14 +2274,8 @@ function pipeCardById(cid){ return pipeCards().find(c=>c.id===cid); }
 function pipeCardTotals(c){ const log=c.log||[]; const inv=log.reduce((a,e)=>a+(+e.invest||0),0); const rev=log.reduce((a,e)=>a+(+e.revenue||0),0); return {inv,rev,roas:inv>0?rev/inv:0,lucro:rev-inv,days:log.length}; }
 function daysSince(dstr){ if(!dstr) return 0; const d=new Date(dstr+'T12:00'); const t=new Date(); t.setHours(12,0,0,0); return Math.max(1,Math.round((t-d)/864e5)+1); }
 
-function renderProductsView(){
-  const cat=prodTab!=='esteira';
-  $$('#v-produtos [data-prodtab]').forEach(b=>b.classList.toggle('on', b.dataset.prodtab===prodTab));
-  const setD=(sel,d)=>{const e=$(sel); if(e) e.style.display=d;};
-  setD('#prodCatalog', cat?'block':'none'); setD('#pipeBoard', cat?'none':'flex');
-  setD('#addProd', cat?'inline-flex':'none'); setD('#addStage', cat?'none':'inline-flex'); setD('#addPipeCard', cat?'none':'inline-flex');
-  if(cat) renderProducts(); else renderPipeline();
-}
+function renderProductsView(){ renderProducts(); }
+function renderEsteira(){ renderPipeline(); }
 function setProdTab(t){ prodTab=(t==='esteira')?'esteira':'catalogo'; ui.prodTab=prodTab; saveUI(); renderProductsView(); }
 
 function renderPipeline(){
@@ -2637,23 +2645,50 @@ function expModal(editId, mopts){
     if(mopts.after) mopts.after(); else closeModal();
   };
 }
+function readImageResized(file, maxDim, cb){
+  try{
+    const r=new FileReader();
+    r.onload=()=>{ const img=new Image(); img.onload=()=>{ let w=img.width,h=img.height; if(w>h&&w>maxDim){h=Math.round(h*maxDim/w);w=maxDim;} else if(h>maxDim){w=Math.round(w*maxDim/h);h=maxDim;} const c=document.createElement('canvas'); c.width=w; c.height=h; try{ c.getContext('2d').drawImage(img,0,0,w,h); cb(c.toDataURL('image/jpeg',0.82)); }catch(e){ cb(null); } }; img.onerror=()=>cb(null); img.src=r.result; };
+    r.onerror=()=>cb(null);
+    r.readAsDataURL(file);
+  }catch(e){ cb(null); }
+}
+const PHOTO_PLACEHOLDER='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>';
 function prodModal(editId){
   const p=editId?(db.products.find(x=>x.id===editId)||{}):{};
+  let pendingPhoto = p.photo||'';
   modal.innerHTML=`<h3>${editId?'Editar produto':'Novo produto'}</h3>
     <div class="field"><label>Nome</label><input id="f-name" placeholder="Ex: Ebook Renda Extra" value="${esc(p.name||'')}"></div>
     <div class="field"><label>Preço padrão</label><input id="f-price" type="number" step="0.01" placeholder="0,00" value="${p.price!=null?p.price:''}"></div>
+    <div class="field"><label>Foto <span class="f-opt">(opcional)</span></label>
+      <div class="f-photo-row">
+        <div class="f-photo-prev${pendingPhoto?' has':''}" id="f-photo-prev">${pendingPhoto?`<img src="${pendingPhoto}" alt="">`:PHOTO_PLACEHOLDER}</div>
+        <div class="f-photo-actions">
+          <button type="button" class="btn ghost small" id="f-photo-btn">Escolher foto</button>
+          <button type="button" class="btn ghost small" id="f-photo-clear" style="${pendingPhoto?'':'display:none'}">Remover</button>
+          <input type="file" id="f-photo" accept="image/*" style="display:none">
+        </div>
+      </div>
+    </div>
+    <div class="field"><label>Link do arquivo <span class="f-opt">(opcional)</span></label><input id="f-link" type="url" placeholder="https://drive.google.com/..." value="${esc(p.link||'')}"></div>
+    <div class="field"><label>Dados / observações <span class="f-opt">(opcional)</span></label><textarea id="f-notes" rows="3" placeholder="Anotações, público, página de vendas...">${esc(p.notes||'')}</textarea></div>
     <div class="modal-actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" id="f-save">${editId?'Salvar alterações':'Salvar produto'}</button></div>`;
   openModal();
+  const prev=$('#f-photo-prev'), clr=$('#f-photo-clear'), fileInp=$('#f-photo'), pBtn=$('#f-photo-btn');
+  if(pBtn) pBtn.onclick=()=>fileInp&&fileInp.click();
+  if(fileInp) fileInp.onchange=()=>{ const f=fileInp.files&&fileInp.files[0]; if(!f) return; readImageResized(f,420,durl=>{ if(durl){ pendingPhoto=durl; if(prev){ prev.classList.add('has'); prev.innerHTML='<img src="'+durl+'" alt="">'; } if(clr) clr.style.display=''; } else toast('Não foi possível carregar a imagem'); }); };
+  if(clr) clr.onclick=()=>{ pendingPhoto=''; if(prev){ prev.classList.remove('has'); prev.innerHTML=PHOTO_PLACEHOLDER; } clr.style.display='none'; if(fileInp) fileInp.value=''; };
   $('#f-save').onclick=()=>{
     const name=$('#f-name').value.trim(),price=parseFloat($('#f-price').value)||0;
+    const link=$('#f-link').value.trim(), notes=$('#f-notes').value.trim();
     if(!name){toast('Informe o nome');return}
     if(editId){
       const old=db.products.find(x=>x.id===editId), oldName=old.name;
-      old.name=name; old.price=price;
+      old.name=name; old.price=price; old.photo=pendingPhoto; old.link=link; old.notes=notes;
       // mantém vínculo das vendas se o nome mudou
       if(oldName!==name) db.sales.forEach(s=>{if(s.product===oldName)s.product=name});
     } else {
-      db.products.push({id:id(),name,price});
+      db.products.push({id:id(),name,price,photo:pendingPhoto,link,notes});
     }
     closeModal();render();renderVault();renderCalendar();toast(editId?'Produto atualizado ✓':'Produto adicionado ✓');
   };
@@ -3737,6 +3772,7 @@ function switchView(v){
     vendas:['Vendas','Todas as vendas registradas, com filtros por produto e período.'],
     despesas:['Despesas','Para onde o dinheiro foi: anúncios, ferramentas, taxas.'],
     produtos:['Produtos','Seu catálogo e o desempenho de cada um.'],
+    esteira:['Esteira de validação','Valide cada produto do Teste à Escala — arraste os cards conforme evoluem.'],
     calendario:['Diário','Seu dia a dia por data — lucro, ROAS e imposto calculados sozinhos.'],
     config:['Configurações','Tema do painel, imposto sobre anúncios e preferências da sua conta.'],
     cofre:['Cofre','Suas contas, chips e chaves PIX de contingência, salvos neste dispositivo.'],
@@ -3756,6 +3792,7 @@ function switchView(v){
   if(v==='admin') renderAdmin();
   if(v==='afiliados') renderAffiliates();
   if(v==='produtos') renderProductsView();
+  if(v==='esteira') renderEsteira();
   if(v==='config') renderConfig();
 }
 $('#nav').addEventListener('click',e=>{
@@ -4372,7 +4409,7 @@ const TOUR_STEPS_MOBILE=[
   {sel:'.mtab-btn[data-v="vendas"]',title:'Vendas',text:'Tudo que entra, com filtros por produto e por período.'},
   {sel:'.mtab-btn[data-v="despesas"]',title:'Despesas',text:'Tudo que sai: anúncios, ferramentas e taxas — pontual ou recorrente.'},
   {sel:'#mtabMore',title:'Menu "Mais"',text:'Toque aqui pra abrir o menu completo: Produtos, Meta Ads, Cofre, Indique e Ganhe e mais.'},
-  {sel:null,title:'Tudo pronto! 🚀',text:'Explore à vontade. Pra rever este guia, toque no "?" no canto da tela.'}
+  {sel:null,title:'Tudo pronto! 🚀',text:'Explore à vontade — tudo que você lançar vira relatório automático.'}
 ];
 let tourIdx=0, tourSet=TOUR_STEPS;
 /* mostra SÓ na primeira vez — já marca como visto ao iniciar (não repete nem se não terminar) */

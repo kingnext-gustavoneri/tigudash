@@ -75,6 +75,21 @@
   .cfg-field input[type=number]{width:120px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 13px;font-size:15px;font-family:'JetBrains Mono',monospace}
   .cfg-field input[type=number]:focus{outline:none;border-color:var(--accent)}
   .cfg-suffix{color:var(--muted);font-size:13px}
+  .cfg-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .cfg-ic{width:42px;height:42px;border-radius:11px;background:var(--surface2);border:1px solid var(--border);display:grid;place-items:center;color:var(--muted);flex:none}
+  .cfg-ic svg{width:20px;height:20px}
+  .cfg-plabel{display:block;font-size:12.5px;color:var(--muted);font-weight:600;margin:14px 0 6px}
+  .cfg-pinp{width:100%;max-width:420px;display:block;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:11px 13px;font-size:14px;font-family:inherit}
+  .cfg-pinp:focus{outline:none;border-color:var(--accent)}
+  .cfg-pmini{font-size:11.5px;color:var(--faint);margin-top:6px}
+  .cfg-eyebtn{background:none;border:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:8px;font:inherit;font-size:13px;padding:14px 0;transition:.15s}
+  .cfg-eyebtn:hover{color:var(--text)}
+  .cfg-eyebtn svg{width:16px;height:16px}
+  .cfg-btn{background:var(--accent);color:var(--ink);border:none;border-radius:10px;padding:11px 20px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:.15s}
+  .cfg-btn:hover{filter:brightness(1.06)}
+  .cfg-btn:disabled{opacity:.5;cursor:default}
+  .cfg-msg{font-size:13px;margin-top:12px;font-weight:600}
+  .cfg-msg.ok{color:var(--green)} .cfg-msg.err{color:var(--red)}
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     background:
@@ -281,7 +296,7 @@
     text-align:center;font-weight:600;padding:6px 0}
   .cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
   .cal-day{background:var(--surface);border:1px solid var(--border);border-radius:12px;
-    padding:10px 11px;min-height:144px;display:flex;flex-direction:column;gap:2px;cursor:pointer;transition:.14s ease}
+    padding:9px 10px;min-height:94px;display:flex;flex-direction:column;gap:2px;cursor:pointer;transition:.14s ease}
   /* linhas de leitura do dia (Receita/Gasto) */
   .cal-day .d-row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:1px 1px}
   .cal-day .d-row>span{color:var(--faint);font-size:10px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
@@ -290,8 +305,9 @@
   .cal-day .d-row>b.pos{color:var(--green)} .cal-day .d-row>b.neg{color:var(--red)}
   /* ===== Diário premium ===== */
   .cal-day{box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 12px 30px -26px rgba(0,0,0,.7)}
-  .cal-day.is-empty{opacity:.42;background:transparent}
-  .cal-day.is-empty:hover{opacity:.8}
+  .cal-day.is-empty{background:transparent;border-color:var(--border2)}
+  .cal-day.is-empty .d-num>span:first-child{color:var(--muted)}
+  .cal-day.is-empty:hover{border-color:var(--accent-dim)}
   .cal-day.is-win{border-color:rgba(107,212,154,.30);background:linear-gradient(162deg,rgba(107,212,154,.07),var(--surface) 58%)}
   .cal-day.is-win:hover:not(.out){border-color:rgba(107,212,154,.55)}
   .cal-day.is-loss{border-color:rgba(240,121,95,.28);background:linear-gradient(162deg,rgba(240,121,95,.06),var(--surface) 58%)}
@@ -313,7 +329,7 @@
   .cal-day:hover:not(.out){border-color:var(--accent-dim);transform:translateY(-1px)}
   .cal-day.out{background:transparent;border-color:transparent;pointer-events:none;cursor:default}
   .cal-day.today{border-color:var(--accent-dim);box-shadow:0 0 0 1px var(--accent-dim) inset}
-  .cal-day .d-num{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+  .cal-day .d-num{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;
     color:var(--muted);display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
   .cal-day .d-num .d-tags{display:flex;gap:4px}
   .cal-day .d-num small{font-size:9.5px;font-weight:600;padding:2px 6px;border-radius:6px;font-family:'Inter',sans-serif;letter-spacing:.02em}
@@ -1487,7 +1503,7 @@
         <button class="cal-nav-btn" id="calNext" aria-label="Próximo mês"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
         <button class="cal-today-btn" id="calToday"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Hoje</button>
       </div>
-      <div class="hint" style="margin-bottom:14px">Acompanhamento diário (somente leitura): as <b>vendas</b> e <b>despesas</b> que você lança nas abas <b>Vendas</b> e <b>Despesas</b> aparecem aqui por data, com <b>Lucro, ROAS, ROI</b> e imposto calculados. <b>Clique no dia</b> para ver os detalhes e lançar (atalho <kbd style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px">N</kbd> abre hoje).</div>
+      <div class="hint" style="margin-bottom:14px"><b>Clique em um dia</b> para ver os detalhes e lançar receita/gasto · atalho <kbd style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px">N</kbd> abre hoje.</div>
       <div class="cal-head">
         <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
       </div>
@@ -1705,6 +1721,22 @@
           <input type="number" id="cfgImposto" min="0" max="100" step="0.5" inputmode="decimal">
           <span class="cfg-suffix">% sobre o gasto com anúncios</span>
         </div>
+      </div>
+      <div class="cfg-card" id="cfgPwCard">
+        <div class="cfg-head">
+          <div class="cfg-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div><h3 style="margin:0">Alterar senha</h3><div class="hint" style="margin:2px 0 0">Atualize sua senha de acesso.</div></div>
+        </div>
+        <label class="cfg-plabel">Senha atual</label>
+        <input type="password" id="cpCur" class="cfg-pinp" autocomplete="current-password" placeholder="••••••••">
+        <label class="cfg-plabel">Nova senha</label>
+        <input type="password" id="cpNew" class="cfg-pinp" autocomplete="new-password" placeholder="••••••••">
+        <div class="cfg-pmini">Mínimo de 6 caracteres</div>
+        <label class="cfg-plabel">Confirmar nova senha</label>
+        <input type="password" id="cpNew2" class="cfg-pinp" autocomplete="new-password" placeholder="••••••••">
+        <button class="cfg-eyebtn" id="cpEye" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg> <span>Mostrar senhas</span></button>
+        <div><button class="cfg-btn" id="cpSave" type="button">Alterar senha</button></div>
+        <div class="cfg-msg" id="cpMsg"></div>
       </div>
     </section>
   </main>
@@ -2044,15 +2076,15 @@ function render(){
   // ---- KPIs do período ----
   $('#kpiIn').textContent=brlShort(fat);
   $('#kpiInSub').textContent=dashSales.length+(dashSales.length===1?' venda no período':' vendas no período');
-  $('#kpiAds').textContent='-'+brlShort(adsRange);
-  { const kas=$('#kpiAdsSub'); kas.textContent = adsRange>0 ? ('+ '+brlShort(impostoRange)+' imposto ('+impostoPctLabel()+')') : 'sem ADS no período'; kas.style.cursor='pointer'; kas.title='Clique para editar o % de imposto'; kas.onclick=setImpostoPct; }
+  $('#kpiAds').textContent='-'+brlShort(adsRange+impostoRange);
+  { const kas=$('#kpiAdsSub'); kas.textContent = adsRange>0 ? (brlShort(adsRange)+' ads + '+brlShort(impostoRange)+' imposto') : 'sem ADS no período'; kas.style.cursor='pointer'; kas.title='Imposto '+impostoPctLabel()+' — clique para editar'; kas.onclick=setImpostoPct; }
   const re=$('#kpiRoas');
   re.textContent=adsRange>0?roas.toFixed(2)+'x':'—';
   re.className='k-val '+(roas>=1.5?'pos':roas>=1?'':'neg');
   $('#kpiRoasSub').textContent=adsRange>0?(roas>=1.5?'ótimo':roas>=1?'no limite':'prejuízo'):'sem ADS no período';
   $('#kpiCpa').textContent=cpa>0?brlShort(cpa):'—';
   const pe=$('#kpiProfit'); pe.textContent=(lucroLiquido<0?'-':'')+brlShort(Math.abs(lucroLiquido)); pe.className='k-val '+(lucroLiquido>=0?'pos':'neg');
-  $('#kpiMargin').textContent='margem '+margin+'% · imposto incluso';
+  $('#kpiMargin').textContent='margem '+margin+'%';
   renderChart();
   renderProdBreak(dashSales,fat);
   renderExpBreak(dashExps,out);
@@ -3705,7 +3737,7 @@ function switchView(v){
     vendas:['Vendas','Todas as vendas registradas, com filtros por produto e período.'],
     despesas:['Despesas','Para onde o dinheiro foi: anúncios, ferramentas, taxas.'],
     produtos:['Produtos','Seu catálogo e o desempenho de cada um.'],
-    calendario:['Diário','Suas vendas e despesas organizadas por data — Lucro, ROAS, ROI e Imposto calculados automaticamente.'],
+    calendario:['Diário','Seu dia a dia por data — lucro, ROAS e imposto calculados sozinhos.'],
     config:['Configurações','Tema do painel, imposto sobre anúncios e preferências da sua conta.'],
     cofre:['Cofre','Suas contas, chips e chaves PIX de contingência, salvos neste dispositivo.'],
     metaads:['Meta Ads','Acompanhe suas campanhas, contas de anúncio e BMs — investimento, retorno e ROAS num lugar só.'],
@@ -3744,6 +3776,29 @@ function renderConfig(){
   const cur=(typeof ui!=='undefined'&&ui.theme)||'dark';
   $$('#themeGrid .theme-opt').forEach(b=>b.classList.toggle('on', b.dataset.themeOpt===cur));
   const f=$('#cfgImposto'); if(f) f.value=impostoPctVal();
+  const pw=$('#cfgPwCard'); if(pw) pw.style.display=(typeof AUTH_MODE!=='undefined'&&AUTH_MODE!=='supa')?'none':'';
+}
+async function changePassword(){
+  const cur=($('#cpCur').value||''), nw=($('#cpNew').value||''), nw2=($('#cpNew2').value||'');
+  const msg=$('#cpMsg'), btn=$('#cpSave');
+  const setMsg=(t,ok)=>{ if(msg){ msg.textContent=t; msg.className='cfg-msg '+(ok?'ok':'err'); } };
+  if(nw.length<6){ setMsg('A nova senha precisa ter ao menos 6 caracteres.',false); return; }
+  if(nw!==nw2){ setMsg('As senhas não conferem.',false); return; }
+  if(typeof AUTH_MODE!=='undefined' && AUTH_MODE!=='supa'){ setMsg('Alteração de senha disponível apenas no login online.',false); return; }
+  if(!supa){ setMsg('Conexão indisponível. Recarregue a página.',false); return; }
+  if(btn){ btn.disabled=true; btn.textContent='Alterando…'; }
+  try{
+    const { data:u } = await supa.auth.getUser();
+    const email=(u&&u.user&&u.user.email)||'';
+    if(cur && email){
+      const { error:e1 } = await supa.auth.signInWithPassword({ email, password:cur });
+      if(e1){ setMsg('Senha atual incorreta.',false); if(btn){ btn.disabled=false; btn.textContent='Alterar senha'; } return; }
+    }
+    const { error:e2 } = await supa.auth.updateUser({ password:nw });
+    if(e2){ setMsg('Erro: '+(e2.message||'tente novamente'),false); }
+    else { setMsg('Senha alterada com sucesso! ✓',true); $('#cpCur').value=''; $('#cpNew').value=''; $('#cpNew2').value=''; try{toast('Senha alterada');}catch(e){} }
+  }catch(err){ setMsg('Não foi possível alterar a senha agora.',false); }
+  if(btn){ btn.disabled=false; btn.textContent='Alterar senha'; }
 }
 (function(){
   const grid=$('#themeGrid');
@@ -3757,6 +3812,13 @@ function renderConfig(){
     if(isNaN(n)||n<0||n>100){ toast('Valor inválido'); f.value=impostoPctVal(); return; }
     ui.impostoPct=n; saveUI(); render(); toast('Imposto sobre ADS: '+impostoPctLabel());
   });
+  const eye=$('#cpEye');
+  if(eye) eye.addEventListener('click',()=>{
+    const show=$('#cpCur').type==='password';
+    ['cpCur','cpNew','cpNew2'].forEach(id=>{ const el=$('#'+id); if(el) el.type=show?'text':'password'; });
+    const lbl=eye.querySelector('span'); if(lbl) lbl.textContent=show?'Ocultar senhas':'Mostrar senhas';
+  });
+  const save=$('#cpSave'); if(save) save.addEventListener('click', changePassword);
   try{ applyTheme((typeof ui!=='undefined'&&ui.theme)||'dark'); }catch(e){}
 })();
 /* ----- tab bar inferior + drawer (mobile) ----- */

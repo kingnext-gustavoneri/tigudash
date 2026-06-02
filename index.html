@@ -268,8 +268,18 @@
   .cal-kpis .k-val{font-size:21px}
   @media(max-width:1100px){.cal-kpis{grid-template-columns:repeat(3,1fr)}}
   @media(max-width:860px){
-    .cal-head,.cal-week{grid-template-columns:repeat(7,minmax(96px,1fr));overflow-x:auto}
+    .cal-head,.cal-week{grid-template-columns:repeat(7,minmax(0,1fr))}
     .cal-kpis{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:560px){
+    /* calendário compacto no celular: dia + lucro; toque abre os detalhes */
+    .cal-head>div{font-size:9px;padding:4px 0}
+    .cal-day{min-height:56px;padding:5px 3px}
+    .cal-day .d-num{font-size:11px;margin-bottom:1px}
+    .cal-day .d-num .d-tags{display:none}
+    .cal-day .d-hero-lbl,.cal-day .d-mini,.cal-day .d-pills{display:none}
+    .cal-day .d-hero{margin-top:1px}
+    .cal-day .d-hero-val{font-size:11px;letter-spacing:-.3px}
   }
 
   /* barra de filtro de período (visão geral) */
@@ -593,8 +603,8 @@
   @media(max-width:860px){ .ml-table-wrap{max-height:none} }
 
   @media(max-width:860px){
-    .app{grid-template-columns:1fr}
-    aside{position:static;height:auto;flex-direction:column;gap:10px;padding:14px 14px 12px;border-right:none;border-bottom:1px solid var(--border)}
+    .app{grid-template-columns:minmax(0,1fr)}
+    aside{position:static;height:auto;flex-direction:column;gap:10px;padding:14px 14px 12px;border-right:none;border-bottom:1px solid var(--border);min-width:0}
     .brand{margin-bottom:0;align-items:flex-start} .brand::before{font-size:22px} .brand::after{margin-top:-2px}
     /* menu vira uma faixa rolável horizontal (sem quebrar em várias linhas) */
     nav{display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
@@ -605,9 +615,12 @@
     .side-foot{flex-direction:row;flex-wrap:wrap;margin:0;gap:6px;padding-top:0}
     .acct-box{width:100%;order:-1}
     .side-foot>button{flex:1 1 auto;min-width:96px;font-size:11.5px;padding:9px 8px}
-    main{padding:18px 16px 64px;max-width:100%;margin:0}
+    main{padding:18px 16px 64px;max-width:100%;margin:0;min-width:0;overflow-x:hidden}
     .topbar{align-items:flex-start} .topbar h2{font-size:24px}
     .grid2{grid-template-columns:1fr}
+    /* qualquer tabela/área larga rola sozinha em vez de esticar a página */
+    .ml-table-wrap,.card>table,.view .card>table,.vtabs{max-width:100%;overflow-x:auto}
+    .card{overflow-x:auto}
   }
   /* monitores grandes / ultra-wide — usa melhor o espaço */
   @media(min-width:1700px){

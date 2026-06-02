@@ -741,6 +741,7 @@
   .auth-card{width:min(400px,100%);background:var(--surface);border:1px solid var(--border);border-radius:20px;
     padding:30px 28px;box-shadow:0 40px 100px -30px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.05)}
   .auth-logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;letter-spacing:-1px;color:var(--accent);margin-bottom:18px;text-shadow:0 0 24px rgba(188,232,74,.25)}
+  @media(max-width:560px){.auth-logo{text-align:center;font-size:28px;margin-bottom:20px}}
   .auth-h{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;margin-bottom:5px}
   .auth-sub{color:var(--muted);font-size:13.5px;margin-bottom:18px;line-height:1.5}
   .auth-msg{background:rgba(240,121,95,.1);border:1px solid rgba(240,121,95,.25);color:var(--red);font-size:12.5px;padding:9px 12px;border-radius:10px;margin-bottom:14px;line-height:1.45}
@@ -4378,8 +4379,8 @@ function renderAuthGate(mode,msg){
   const pw=(id,ph,ac)=>`<div class="pw-wrap"><input id="${id}" type="password" autocomplete="${ac}" placeholder="${ph}"><button type="button" class="pw-eye" data-eye="${id}" tabindex="-1" aria-label="Mostrar senha">${EYE}</button></div>`;
   g.innerHTML=`<div class="auth-card">
     <div class="auth-logo">Tigudash</div>
-    <h2 class="auth-h">${signup?'Criar sua conta':'Entrar no Tigudash'}</h2>
-    <p class="auth-sub">${signup?'Crie seu acesso e ganhe <b>7 dias grátis</b>.':'Acesse seu painel financeiro.'}</p>
+    <h2 class="auth-h">${signup?'Criar sua conta':'Entrar'}</h2>
+    ${signup?`<p class="auth-sub">Crie seu acesso e ganhe <b>7 dias grátis</b>.</p>`:''}
     ${msg?`<div class="auth-msg">${esc(msg)}</div>`:''}
     ${signup?`<div class="field"><label>Nome</label><input id="auth-name" autocomplete="name" placeholder="Seu nome"></div>`:''}
     ${signup?`<div class="field"><label>Nome de usuário</label><input id="auth-username" autocomplete="off" placeholder="ex: joaosilva" style="text-transform:lowercase"></div>`:''}

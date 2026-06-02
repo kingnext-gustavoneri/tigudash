@@ -1045,6 +1045,7 @@
   .am-no{flex:1;min-width:130px;justify-content:center;color:var(--red)!important;border-color:rgba(240,121,95,.35)!important}
   .am-no:hover{border-color:var(--red)!important;background:rgba(240,121,95,.08)}
   .role-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.02em;padding:2px 7px;border-radius:6px;margin-left:5px;vertical-align:middle;background:rgba(138,123,255,.16);color:#a99bff}
+  .role-tag.parc{background:rgba(107,212,154,.16);color:#6bd49a}
   .seg-toggle{display:flex;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:3px}
   .seg-toggle button{flex:1;background:none;border:none;color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;padding:9px 6px;border-radius:7px;cursor:pointer;transition:.15s;white-space:nowrap}
   .seg-toggle button:hover:not(.on){color:var(--text)}
@@ -4938,7 +4939,7 @@ async function adminGrantSub(userId, addDays){ return adminGrantAccess(userId, a
 function adminUserModal(userId, email, pending, role){
   modal.innerHTML=`<h3>Gerenciar acesso</h3>
     <p style="color:var(--muted);font-size:13px;margin:-6px 0 16px;word-break:break-all">${esc(email)}</p>
-    <div class="field"><label>Cargo</label><select id="amRole"><option value="user"${role!=='admin'?' selected':''}>Usuário</option><option value="admin"${role==='admin'?' selected':''}>Admin de equipe</option></select><span class="field-hint">Admin de equipe enxerga e gerencia os outros usuários.</span></div>
+    <div class="field"><label>Cargo</label><select id="amRole"><option value="user"${role!=='admin'&&role!=='parceiro'?' selected':''}>Usuário</option><option value="parceiro"${role==='parceiro'?' selected':''}>Parceiro</option><option value="admin"${role==='admin'?' selected':''}>Admin de equipe</option></select><span class="field-hint">Admin de equipe gerencia os outros usuários · Parceiro é uma marcação para seus afiliados/parceiros.</span></div>
     <div class="field"><label>Liberar / estender acesso por</label>
       <div class="am-days" id="amDays">${[7,15,30,60,90].map(d=>`<button type="button" class="am-day${d===30?' on':''}" data-d="${d}">${d} dias</button>`).join('')}</div>
       <div class="grid2" style="margin-top:10px"><input id="amCustom" type="number" min="1" placeholder="ou nº de dias…"><button class="btn" id="amGrant" style="justify-content:center">Liberar acesso</button></div>
@@ -4982,7 +4983,7 @@ async function adminRemove(userId){
 }
 async function adminSetRole(userId, role){
   if(!supa || !isAdmin) return;
-  try{ const { error } = await supa.from('app_state').update({role:role}).eq('user_id',userId); if(error) throw error; toast(role==='admin'?'Agora é Admin de equipe ✓':'Cargo: Usuário ✓'); renderAdmin(); }
+  try{ const { error } = await supa.from('app_state').update({role:role}).eq('user_id',userId); if(error) throw error; toast(role==='admin'?'Agora é Admin de equipe ✓':(role==='parceiro'?'Cargo: Parceiro ✓':'Cargo: Usuário ✓')); renderAdmin(); }
   catch(e){ toast('Falhou. Rode o SQL da coluna "role" no Supabase.'); }
 }
 function subPill(sub){
@@ -5028,7 +5029,7 @@ function adminRenderUsers(body, users, mode){
     </div>` : '';
   const rowHtml = u => {
     const isPending = u.needsApproval && !u.approved && !u.admin && !u.rejected;
-    const nameCell = `<td class="ml-name"><div class="mln-t">${u.username?('@'+esc(u.username)):esc(u.email)}${u.admin?' <span class="utag adm" title="Dono">dono</span>':(u.role==='admin'?' <span class="role-tag">adm equipe</span>':'')}${u.isMe?' <span class="utag me" title="Você">você</span>':''}</div>${u.username?`<div style="font-size:11px;color:var(--faint);margin-top:1px">${esc(u.email)}</div>`:''}</td>`;
+    const nameCell = `<td class="ml-name"><div class="mln-t">${u.username?('@'+esc(u.username)):esc(u.email)}${u.admin?' <span class="utag adm" title="Dono">dono</span>':(u.role==='admin'?' <span class="role-tag">adm equipe</span>':(u.role==='parceiro'?' <span class="role-tag parc">parceiro</span>':''))}${u.isMe?' <span class="utag me" title="Você">você</span>':''}</div>${u.username?`<div style="font-size:11px;color:var(--faint);margin-top:1px">${esc(u.email)}</div>`:''}</td>`;
     const act = !supaMode ? `<td class="c">${rel(u.updated)}</td>`
       : `<td class="c">${u.rejected?'<span class="pill danger">recusado</span>':(isPending?'<span class="pill warn">pendente</span>':subPill(u.sub))}</td><td class="c">${u.admin?'<span class="utag adm">dono</span>':`<button class="btn ghost mini" data-manage="${esc(u.id)}" data-email="${esc(u.email)}" data-pending="${isPending?'1':''}" data-role="${esc(u.role||'user')}">Gerenciar</button>`}</td>`;
     return `<tr${isPending?' class="row-pending"':''}>${nameCell}<td class="num r">${u.nsales||'—'}</td><td class="num r pos">${u.fat?brlShort(u.fat):'—'}</td><td class="num r neg">${u.gasto?brlShort(u.gasto):'—'}</td><td class="num r ${u.lucro>=0?'pos':'neg'}">${(u.fat||u.gasto)?brlShort(u.lucro):'—'}</td>${act}</tr>`;
@@ -5039,8 +5040,9 @@ function adminRenderUsers(body, users, mode){
   let tablesHtml;
   if(supaMode){
     const admins=users.filter(u=>u.admin||u.role==='admin');
-    const regular=users.filter(u=>!(u.admin||u.role==='admin'));
-    tablesHtml = `<div class="admin-group-h">👑 Admins de equipe <span class="gc">${admins.length}</span></div>${table(admins)}<div class="admin-group-h">🙋 Usuários <span class="gc">${regular.length}</span></div>${table(regular)}`;
+    const parceiros=users.filter(u=>!u.admin&&u.role==='parceiro');
+    const regular=users.filter(u=>!u.admin&&u.role!=='admin'&&u.role!=='parceiro');
+    tablesHtml = `<div class="admin-group-h">👑 Admins de equipe <span class="gc">${admins.length}</span></div>${table(admins)}<div class="admin-group-h">🤝 Parceiros <span class="gc">${parceiros.length}</span></div>${table(parceiros)}<div class="admin-group-h">🙋 Usuários <span class="gc">${regular.length}</span></div>${table(regular)}`;
   } else tablesHtml = table(users);
   body.innerHTML=`
     <div class="meta-kpis" style="margin-bottom:18px">

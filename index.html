@@ -648,16 +648,40 @@
     main{max-width:1840px;padding-left:46px;padding-right:46px}
     .kpis{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
   }
-  /* celulares pequenos */
+  /* ===== estruturas que precisam ROLAR em vez de quebrar (telas pequenas) ===== */
+  @media(max-width:640px){
+    /* filtro de período vira uma faixa de chips que rola na horizontal */
+    .period-bar{padding:9px 11px;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:stretch}
+    .period-label{display:none}
+    .period-pills{width:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+    .period-pills::-webkit-scrollbar{display:none}
+    .period-pills button{flex:0 0 auto;padding:7px 13px;font-size:12px}
+    .period-custom{width:100%;flex-wrap:wrap}
+    .period-range{margin-left:0;width:100%;text-align:left;font-size:11px}
+    /* abas internas (Cofre, Meta Ads, Produtos) rolam — nada de quebrar em 2 linhas */
+    .vtabs{width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .vtabs::-webkit-scrollbar{display:none}
+    .vtabs button{flex:0 0 auto;white-space:nowrap}
+  }
+  /* ===== celulares — modo app compacto (mais denso e fluido) ===== */
   @media(max-width:480px){
-    main{padding:14px 12px calc(78px + env(safe-area-inset-bottom,0px))}
-    .topbar{gap:12px} .topbar h2{font-size:21px} .topbar p{font-size:12.5px}
-    .kpis{grid-template-columns:repeat(2,1fr);gap:10px}
-    .kpi{padding:14px 14px 12px} .kpi .k-val{font-size:21px}
-    .hero-today{padding:17px 15px} .hero-title{font-size:20px}
-    .modal{padding:22px 18px} .modal h3{font-size:19px}
+    main{padding:14px 13px calc(80px + env(safe-area-inset-bottom,0px))}
+    .topbar{gap:7px;margin-bottom:14px} .topbar h2{font-size:20px} .topbar p{font-size:12px;line-height:1.35}
+    .kpis{grid-template-columns:repeat(2,1fr);gap:9px}
+    .kpi{padding:13px 13px 11px} .kpi .k-val{font-size:18.5px} .kpi .k-lbl{font-size:10px} .kpi .k-sub{font-size:10px}
+    .meta-kpis{gap:9px;margin-bottom:14px}
+    .meta-kpi{padding:12px 13px} .meta-kpi .mk-val{font-size:18px} .meta-kpi .mk-lbl{font-size:9.5px} .meta-kpi .mk-sub{font-size:9.5px}
+    .card{padding:15px 15px} .card h3{font-size:15px} .card .hint{font-size:11.5px;margin-bottom:12px}
+    .hero-today{padding:16px 15px;gap:12px} .hero-title{font-size:19px} .hero-sub{font-size:12.5px}
+    .hero-right{gap:14px} .hero-m-val{font-size:19px} .hero-metric{min-width:118px}
+    .modal{padding:20px 16px} .modal h3{font-size:18px}
+    .sec-head{gap:9px;margin-bottom:12px}
     .pipe-col{flex-basis:204px}
-    .vtabs{width:100%;overflow-x:auto}
+    table th,table td{padding:9px 9px;font-size:12.5px}
+    /* KPIs do dia (modal Diário): mais compactos pra caber sem encostar nas bordas */
+    .day-kpis{gap:6px;margin-bottom:14px}
+    .day-kpis>div{padding:8px 9px}
+    .day-kpis .dk-val{font-size:12.5px} .day-kpis .dk-lbl{font-size:9px}
   }
 
   /* ===================== REFINAMENTO VISUAL · futurista / moderno ===================== */

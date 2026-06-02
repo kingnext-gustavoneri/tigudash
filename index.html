@@ -4344,17 +4344,16 @@ function renderPaywall(msg){
 function renderTrialBadge(){
   if(isAdmin || !subState) return;
   const foot=document.querySelector('.side-foot'); if(!foot) return;
-  let b=$('#subBadge'); if(!b){ b=document.createElement('div'); b.id='subBadge'; foot.insertBefore(b, foot.firstChild); }
-  let cls,txt;
-  if(subState.plan==='active'){ cls='ok'; txt=`Assinatura ativa · ${subState.daysLeft} dia${subState.daysLeft===1?'':'s'}`; }
-  else if(subState.plan==='trial'){ cls=subState.daysLeft<=2?'warn':'trial'; txt=`Teste grátis · ${subState.daysLeft} dia${subState.daysLeft===1?'':'s'} restante${subState.daysLeft===1?'':'s'}`; }
-  else { cls='warn'; txt='Acesso expirado'; }
-  const link=(subState.plan!=='active'&&SUB_CHECKOUT_URL)?` <a href="${esc(SUB_CHECKOUT_URL)}" target="_blank" rel="noopener" class="sb-link">assinar</a>`:'';
-  b.className='sub-badge '+cls;
-  b.innerHTML=`<span class="sb-dot"></span><span class="sb-txt">${esc(txt)}</span>${link}`;
-  /* botão "Assinar agora" — só durante o teste grátis, acima do Sair */
+  /* selo só pra ASSINANTE ATIVO; no teste mostramos apenas o botão Assinar agora */
+  let b=$('#subBadge');
+  if(subState.plan==='active'){
+    if(!b){ b=document.createElement('div'); b.id='subBadge'; foot.insertBefore(b, foot.firstChild); }
+    b.className='sub-badge ok';
+    b.innerHTML=`<span class="sb-dot"></span><span class="sb-txt">Assinatura ativa · ${subState.daysLeft} dia${subState.daysLeft===1?'':'s'}</span>`;
+  } else if(b){ b.remove(); }
+  /* botão "Assinar agora" — durante o teste (acima do Sair) */
   let cta=$('#subCta');
-  if(subState.plan==='trial'){
+  if(subState.plan!=='active'){
     if(!cta){
       cta=document.createElement(SUB_CHECKOUT_URL?'a':'button'); cta.id='subCta'; cta.className='sub-cta';
       const acct=$('#acctBox'); if(acct) foot.insertBefore(cta, acct); else foot.appendChild(cta);

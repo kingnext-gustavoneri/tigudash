@@ -18,6 +18,63 @@
     --glow:rgba(188,232,74,.35);
     --shadow:0 24px 60px -24px rgba(0,0,0,.85);
   }
+  /* ===== Temas (Configurações) ===== */
+  :root[data-theme="light"]{
+    color-scheme: light;
+    --bg:#eef1f7; --surface:#ffffff; --surface2:#f3f5fa;
+    --text:#171a21; --muted:#5a616f; --faint:#9aa1b0;
+    --accent:#6f9c0d; --accent-dim:#577d06; --ink:#ffffff;
+    --green:#1f9d57; --red:#d8492c;
+    --border:rgba(15,20,30,.12); --border2:rgba(15,20,30,.07);
+    --glow:rgba(111,156,13,.28);
+    --shadow:0 18px 50px -24px rgba(30,40,60,.28);
+  }
+  :root[data-theme="light"] body{
+    background:
+      radial-gradient(1200px 720px at 88% -10%, rgba(111,156,13,.07), transparent 55%),
+      radial-gradient(1000px 700px at -6% 112%, rgba(31,157,87,.05), transparent 55%),
+      var(--bg);
+  }
+  :root[data-theme="light"] aside{ background:linear-gradient(180deg,rgba(0,0,0,.015),transparent 38%),rgba(255,255,255,.72) !important }
+  :root[data-theme="light"] .brand::before{ text-shadow:none }
+  :root[data-theme="light"] .topbar{ background:transparent }
+  :root[data-theme="tig"]{
+    color-scheme: dark;
+    --bg:#060a05; --surface:#0e1810; --surface2:#152213;
+    --text:#eef8e1; --muted:#9bb588; --faint:#5d7449;
+    --accent:#c2f24e; --accent-dim:#a4d531; --ink:#08110a;
+    --green:#79ec84; --red:#ff8a6a;
+    --border:rgba(194,242,78,.16); --border2:rgba(194,242,78,.08);
+    --glow:rgba(194,242,78,.55);
+    --shadow:0 24px 60px -24px rgba(0,0,0,.9);
+  }
+  :root[data-theme="tig"] body{
+    background:
+      radial-gradient(1200px 720px at 88% -10%, rgba(194,242,78,.10), transparent 55%),
+      radial-gradient(1000px 700px at -6% 112%, rgba(121,236,132,.07), transparent 55%),
+      var(--bg);
+  }
+  :root[data-theme="tig"] aside{ background:linear-gradient(180deg,rgba(194,242,78,.05),transparent 38%),rgba(6,10,5,.6) !important }
+  /* ===== área de Configurações ===== */
+  .cfg-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .cfg-card h3{font-family:'Space Grotesk',sans-serif;font-size:16px;margin:0 0 4px}
+  .cfg-card .hint{margin-bottom:16px}
+  .theme-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  @media(max-width:560px){.theme-grid{grid-template-columns:1fr}}
+  .theme-opt{cursor:pointer;border:1.5px solid var(--border);border-radius:13px;padding:12px;background:var(--surface2);transition:.16s;text-align:left;color:var(--text);font-family:inherit;width:100%}
+  .theme-opt:hover{border-color:var(--accent-dim)}
+  .theme-opt.on{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+  .theme-prev{height:50px;border-radius:9px;display:flex;align-items:center;gap:7px;padding:0 11px;margin-bottom:11px;overflow:hidden}
+  .theme-prev .tp-dot{width:13px;height:13px;border-radius:50%;flex:none}
+  .theme-prev .tp-bar{height:8px;border-radius:4px;flex:1}
+  .theme-opt .to-name{font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:7px}
+  .theme-opt .to-sub{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .theme-opt .to-check{margin-left:auto;color:var(--accent);opacity:0;transition:.16s;width:16px;height:16px}
+  .theme-opt.on .to-check{opacity:1}
+  .cfg-field{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .cfg-field input[type=number]{width:120px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 13px;font-size:15px;font-family:'JetBrains Mono',monospace}
+  .cfg-field input[type=number]:focus{outline:none;border-color:var(--accent)}
+  .cfg-suffix{color:var(--muted);font-size:13px}
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     background:
@@ -980,7 +1037,7 @@
       <button data-v="vendas"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg></span> Vendas</button>
       <button data-v="despesas"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/></svg></span> Despesas</button>
       <button data-v="produtos"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg></span> Produtos</button>
-      <div class="nav-section">Marketing</div>
+      <div class="nav-section">Ferramentas</div>
       <button data-v="metaads"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span> Meta Ads</button>
       <button data-v="webhook"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span> Webhook</button>
       <button data-v="afiliados"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span> Indique e Ganhe</button>
@@ -990,6 +1047,7 @@
       <button data-cofre="pix"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg></span> Chaves PIX</button>
       <button data-cofre="company"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg></span> Empresa</button>
       <div class="nav-section">Sistema</div>
+      <button data-v="config"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span> Configurações</button>
     </nav>
     <div class="side-foot"></div>
   </aside>
@@ -1058,7 +1116,7 @@
         </div>
         <div class="kpi">
           <div class="k-ic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5c-1.5 0-2.8 1.4-3 2-2.4-1-8.5-.7-10.5 2.5C4 11 4 13 5 14.5V18a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1h4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2.2c.7-.5 1.3-1.1 1.6-1.8H21a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1c-.3-.6-.6-1-1-1.5V5z"/><path d="M16 10h.01"/><path d="M2 9.5C2 8 3 8 3.5 8"/></svg></div>
-          <div class="k-lbl">Lucro líquido</div><div class="k-val" id="kpiProfit">R$ 0</div><div class="k-sub" id="kpiMargin">já c/ imposto 14%</div>
+          <div class="k-lbl">Lucro líquido</div><div class="k-val" id="kpiProfit">R$ 0</div><div class="k-sub" id="kpiMargin">imposto incluso</div>
         </div>
         <div class="kpi">
           <div class="k-ic red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
@@ -1372,8 +1430,8 @@
         <span class="period-range"></span>
       </div>
       <div class="meta-kpis" id="expKpis" style="margin-bottom:16px">
-        <div class="meta-kpi"><div class="mk-lbl">Gasto com ADS</div><div class="mk-val neg" id="ek-ads">R$ 0</div><div class="mk-sub">tráfego + imposto 14% incluído</div></div>
-        <div class="meta-kpi"><div class="mk-lbl">Imposto 14% (ADS)</div><div class="mk-val neg" id="ek-imp">R$ 0</div><div class="mk-sub">14% sobre o tráfego</div></div>
+        <div class="meta-kpi"><div class="mk-lbl">Gasto com ADS</div><div class="mk-val neg" id="ek-ads">R$ 0</div><div class="mk-sub">tráfego + imposto incluído</div></div>
+        <div class="meta-kpi"><div class="mk-lbl" id="ek-imp-lbl">Imposto 12,5% (ADS)</div><div class="mk-val neg" id="ek-imp">R$ 0</div><div class="mk-sub" id="ek-imp-sub">12,5% sobre o tráfego</div></div>
         <div class="meta-kpi"><div class="mk-lbl">Outras despesas</div><div class="mk-val neg" id="ek-other">R$ 0</div><div class="mk-sub">ferramentas, taxas, equipe…</div></div>
         <div class="meta-kpi"><div class="mk-lbl">Total geral</div><div class="mk-val neg" id="ek-total">R$ 0</div><div class="mk-sub">despesas + imposto sobre ADS</div></div>
       </div>
@@ -1440,7 +1498,7 @@
         <div class="kpi accent"><div class="k-lbl">Lucro</div><div class="k-val" id="calKpiLuc">R$ 0</div><div class="k-sub">receita − gasto</div></div>
         <div class="kpi"><div class="k-lbl">ROAS</div><div class="k-val" id="calKpiRoas">—</div><div class="k-sub">retorno por R$1</div></div>
         <div class="kpi"><div class="k-lbl">ROI</div><div class="k-val" id="calKpiRoi">—</div><div class="k-sub">% sobre o gasto</div></div>
-        <div class="kpi"><div class="k-lbl">Imposto 14%</div><div class="k-val" id="calKpiImp">R$ 0</div><div class="k-sub">sobre o gasto</div></div>
+        <div class="kpi"><div class="k-lbl" id="calKpiImp-lbl">Imposto 12,5%</div><div class="k-val" id="calKpiImp">R$ 0</div><div class="k-sub">sobre o gasto</div></div>
       </div>
     </section>
 
@@ -1604,6 +1662,51 @@
     <section class="view" id="v-afiliados">
       <div id="refBody"></div>
     </section>
+
+    <!-- CONFIGURAÇÕES -->
+    <section class="view" id="v-config">
+      <div class="cfg-card">
+        <h3>Aparência</h3>
+        <div class="hint">Escolha o tema do painel. A preferência fica salva neste dispositivo.</div>
+        <div class="theme-grid" id="themeGrid">
+          <button class="theme-opt" data-theme-opt="dark">
+            <div class="theme-prev" style="background:#0a0b0e;border:1px solid rgba(255,255,255,.08)">
+              <span class="tp-dot" style="background:#bce84a"></span>
+              <span class="tp-bar" style="background:#1c1f27"></span>
+              <span class="tp-bar" style="background:#14161c"></span>
+            </div>
+            <div class="to-name">Escuro <svg class="to-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <div class="to-sub">Padrão — grafite com lima</div>
+          </button>
+          <button class="theme-opt" data-theme-opt="light">
+            <div class="theme-prev" style="background:#eef1f7;border:1px solid rgba(15,20,30,.12)">
+              <span class="tp-dot" style="background:#6f9c0d"></span>
+              <span class="tp-bar" style="background:#ffffff"></span>
+              <span class="tp-bar" style="background:#e3e7ef"></span>
+            </div>
+            <div class="to-name">Claro <svg class="to-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <div class="to-sub">Fundo claro, alto contraste</div>
+          </button>
+          <button class="theme-opt" data-theme-opt="tig">
+            <div class="theme-prev" style="background:#060a05;border:1px solid rgba(194,242,78,.18)">
+              <span class="tp-dot" style="background:#c2f24e"></span>
+              <span class="tp-bar" style="background:#152213"></span>
+              <span class="tp-bar" style="background:#0e1810"></span>
+            </div>
+            <div class="to-name">Tigudash <svg class="to-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <div class="to-sub">Verde-lima vibrante</div>
+          </button>
+        </div>
+      </div>
+      <div class="cfg-card">
+        <h3>Imposto sobre ADS</h3>
+        <div class="hint">Percentual aplicado sobre o gasto com campanhas de anúncios. Entra no cálculo de lucro, no Diário e nas Despesas.</div>
+        <div class="cfg-field">
+          <input type="number" id="cfgImposto" min="0" max="100" step="0.5" inputmode="decimal">
+          <span class="cfg-suffix">% sobre o gasto com anúncios</span>
+        </div>
+      </div>
+    </section>
   </main>
   <!-- Tab bar inferior + drawer (somente mobile, estilo app) -->
   <div class="aside-backdrop" id="asideBackdrop"></div>
@@ -1723,6 +1826,19 @@ function supaSave(){
 /* estado de UI (aba ativa) — separado dos dados financeiros e do cofre */
 function loadUI(){try{return JSON.parse(localStorage.getItem(UIKEY))||{}}catch(e){return {}}}
 function saveUI(){try{localStorage.setItem(UIKEY,JSON.stringify(ui));}catch(e){}}
+/* ---- Imposto sobre ADS (editável, padrão 12,5%) ---- */
+function impostoPctVal(){ const v=parseFloat(typeof ui!=='undefined'&&ui.impostoPct); return (isFinite(v)&&v>=0&&v<=100)?v:12.5; }
+function impostoRate(){ return impostoPctVal()/100; }
+function impostoPctLabel(){ return String(impostoPctVal()).replace('.',',')+'%'; }
+function setImpostoPct(){
+  const v=prompt('Imposto sobre o gasto com anúncios (%)\n\nEx.: 12.5 para 12,5%\nPadrão: 12,5%', String(impostoPctVal()).replace('.',','));
+  if(v===null) return;
+  const n=parseFloat(String(v).replace(',','.'));
+  if(isNaN(n)||n<0||n>100){ toast('Valor inválido'); return; }
+  ui.impostoPct=n; saveUI(); render();
+  const f=$('#cfgImposto'); if(f) f.value=n;
+  toast('Imposto sobre ADS: '+impostoPctLabel());
+}
 let ui=loadUI();
 let db=load()||seed();
 if(!Array.isArray(db.recurring)) db.recurring=[]; // despesas recorrentes (repetem todo mês)
@@ -1845,7 +1961,7 @@ function render(){
   const adsRange=dashExps.filter(e=>e.cat==='Tráfego / Anúncios').reduce((a,e)=>a+e.value,0);
   const fat=dashSales.reduce((a,s)=>a+s.value,0);
   const out=dashExps.reduce((a,e)=>a+e.value,0);
-  const impostoRange=adsRange*0.14;
+  const impostoRange=adsRange*impostoRate();
   const lucroLiquido=fat-out-impostoRange; // lucro líquido já com imposto descontado
   const margin=fat>0?Math.round(lucroLiquido/fat*100):0;
   const roas=adsRange>0?(fat/adsRange):0;
@@ -1857,13 +1973,13 @@ function render(){
   const todayAds=db.expenses.filter(e=>e.date===todayStr && e.cat==='Tráfego / Anúncios').reduce((a,e)=>a+e.value,0);
   const todayOther=db.expenses.filter(e=>e.date===todayStr && e.cat!=='Tráfego / Anúncios').reduce((a,e)=>a+e.value,0);
   const todayFat=todaySales.reduce((a,s)=>a+s.value,0);
-  const todayImp=todayAds*0.14;
+  const todayImp=todayAds*impostoRate();
   const todayLucro=todayFat-todayAds-todayOther-todayImp;
   const todayRoas=todayAds>0?todayFat/todayAds:0;
   const todayMargin=todayFat>0?Math.round(todayLucro/todayFat*100):0;
   // break-even: quanto falta vender pra cobrir gasto + imposto sobre essa cobertura
   // se já cobriu, mostra "atingido"
-  const breakEvenAlvo=(todayAds+todayOther)/0.86; // fat que deixaria lucro=0 (considerando 14% de imposto sobre ads)
+  const breakEvenAlvo=(todayAds+todayOther)/(1-impostoRate()); // fat que deixaria lucro=0 (considerando imposto sobre ads)
   const breakEvenFalta=Math.max(0,breakEvenAlvo-todayFat);
 
   // Semáforo: verde se lucro>0 e ROAS>=1.5; amarelo se lucro>=0 ou ROAS>=1; vermelho se lucro<0
@@ -1929,7 +2045,7 @@ function render(){
   $('#kpiIn').textContent=brlShort(fat);
   $('#kpiInSub').textContent=dashSales.length+(dashSales.length===1?' venda no período':' vendas no período');
   $('#kpiAds').textContent='-'+brlShort(adsRange);
-  $('#kpiAdsSub').textContent=adsRange>0?'imposto ~'+brlShort(impostoRange):'sem ADS no período';
+  { const kas=$('#kpiAdsSub'); kas.textContent = adsRange>0 ? ('+ '+brlShort(impostoRange)+' imposto ('+impostoPctLabel()+')') : 'sem ADS no período'; kas.style.cursor='pointer'; kas.title='Clique para editar o % de imposto'; kas.onclick=setImpostoPct; }
   const re=$('#kpiRoas');
   re.textContent=adsRange>0?roas.toFixed(2)+'x':'—';
   re.className='k-val '+(roas>=1.5?'pos':roas>=1?'':'neg');
@@ -1945,14 +2061,16 @@ function render(){
   renderExpenses(rangeExps);
   renderProducts();
   refreshDatalists();
-  /* Despesas: ADS já somado com 14% de imposto (igual à planilha) */
-  const adsComImposto=adsRange*1.14, outrasDesp=out-adsRange, totalGeral=out+impostoRange;
+  /* Despesas: ADS já somado com o imposto (igual à planilha) */
+  const adsComImposto=adsRange*(1+impostoRate()), outrasDesp=out-adsRange, totalGeral=out+impostoRange;
   const setT=(sel,v)=>{const el=$(sel);if(el)el.textContent=v;};
   setT('#ek-ads', brlShort(adsComImposto));
   setT('#ek-imp', brlShort(impostoRange));
+  setT('#ek-imp-lbl', 'Imposto '+impostoPctLabel()+' (ADS)');
+  setT('#ek-imp-sub', impostoPctLabel()+' sobre o tráfego');
   setT('#ek-other', brlShort(outrasDesp));
   setT('#ek-total', brlShort(totalGeral));
-  $('#expCount').textContent=rangeExps.length+' despesa(s) • '+brl(totalGeral)+' no período (ADS já c/ imposto 14%)';
+  $('#expCount').textContent=rangeExps.length+' despesa(s) • '+brl(totalGeral)+' no período (ADS já c/ imposto '+impostoPctLabel()+')';
   syncPeriodBars();
   save();
 }
@@ -2262,13 +2380,13 @@ function renderCalendar(){
     const lucro=rec-gasto;
     const roas=gasto>0?rec/gasto:0;
     const roi=gasto>0?lucro/gasto*100:0;
-    const imposto=gasto*0.14;
+    const imposto=gasto*impostoRate();
     const isToday=date===todayStr;
     const webhookCount=sales.filter(s=>s.source==='webhook').length;
     const hasData=rec>0||gasto>0;
     const stCls=!hasData?'is-empty':(lucro>0?'is-win':(lucro<0?'is-loss':'is-flat'));
     const tags=`${webhookCount?`<small class="tg-live" title="${webhookCount} venda(s) via webhook"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>${webhookCount}</small>`:''}${sales.length?`<small class="tg-v">${sales.length}v</small>`:''}${others.length?`<small class="tg-d">${others.length}d</small>`:''}`;
-    return `<div class="cal-day ${stCls}${isToday?' today':''}${webhookCount?' has-live':''}" data-date="${date}" title="Clique no dia para ver e lançar${gasto>0?' · Imposto 14%: '+brlShort(imposto):''}">
+    return `<div class="cal-day ${stCls}${isToday?' today':''}${webhookCount?' has-live':''}" data-date="${date}" title="Clique no dia para ver e lançar${gasto>0?' · Imposto '+impostoPctLabel()+': '+brlShort(imposto):''}">
       <div class="d-num"><span>${d}</span><span class="d-tags">${tags}</span></div>
       ${hasData?`<div class="d-hero">
         <span class="d-hero-lbl">Lucro do dia</span>
@@ -2325,7 +2443,7 @@ function updateCalendarTotals(){
   const lucro=totalRec-totalGasto;
   const roas=totalGasto>0?totalRec/totalGasto:0;
   const roi=totalGasto>0?lucro/totalGasto*100:0;
-  const imposto=totalGasto*0.14;
+  const imposto=totalGasto*impostoRate();
   const set=(id,val)=>{const el=$(id); if(el) el.textContent=val;};
   set('#calKpiGasto', totalGasto?brlShort(totalGasto):'R$ 0');
   set('#calKpiRec',   totalRec?brlShort(totalRec):'R$ 0');
@@ -2335,6 +2453,7 @@ function updateCalendarTotals(){
   set('#calKpiRoas', totalGasto>0?roas.toFixed(2):'—');
   set('#calKpiRoi',  totalGasto>0?Math.round(roi)+'%':'—');
   set('#calKpiImp',  totalGasto?brlShort(imposto):'R$ 0');
+  set('#calKpiImp-lbl', 'Imposto '+impostoPctLabel());
 }
 
 /* ---- modals ---- */
@@ -2515,7 +2634,7 @@ function dayDetailModal(date){
   const lucro=rec-gasto;
   const roas=gasto>0?rec/gasto:0;
   const roi=gasto>0?lucro/gasto*100:0;
-  const imposto=gasto*0.14;
+  const imposto=gasto*impostoRate();
   const friendly=new Date(date+'T00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
   const reopen=()=>dayDetailModal(date);
   const salesList=sales.length?sales.map(s=>`<div class="day-row" data-edit-sale="${s.id}" data-back="day:${date}">
@@ -2534,7 +2653,7 @@ function dayDetailModal(date){
       <div><div class="dk-lbl">Gasto Ads</div><div class="dk-val neg">${brl(gasto)}</div></div>
       <div><div class="dk-lbl">Outros gastos</div><div class="dk-val">${brl(outros)}</div></div>
       <div><div class="dk-lbl">Lucro</div><div class="dk-val ${lucro>=0?'pos':'neg'}">${brl(lucro)}</div></div>
-      <div><div class="dk-lbl">Imposto 14%</div><div class="dk-val neg">${gasto?brl(imposto):'R$ 0,00'}</div></div>
+      <div><div class="dk-lbl">Imposto ${impostoPctLabel()}</div><div class="dk-val neg">${gasto?brl(imposto):'R$ 0,00'}</div></div>
       <div><div class="dk-lbl">ROAS · ROI</div><div class="dk-val">${gasto>0?roas.toFixed(2):'—'} · ${gasto>0?Math.round(roi)+'%':'—'}</div></div>
     </div>
     <div class="day-sec">
@@ -3586,7 +3705,8 @@ function switchView(v){
     vendas:['Vendas','Todas as vendas registradas, com filtros por produto e período.'],
     despesas:['Despesas','Para onde o dinheiro foi: anúncios, ferramentas, taxas.'],
     produtos:['Produtos','Seu catálogo e o desempenho de cada um.'],
-    calendario:['Diário','Suas vendas e despesas organizadas por data — Lucro, ROAS, ROI e Imposto 14% calculados automaticamente.'],
+    calendario:['Diário','Suas vendas e despesas organizadas por data — Lucro, ROAS, ROI e Imposto calculados automaticamente.'],
+    config:['Configurações','Tema do painel, imposto sobre anúncios e preferências da sua conta.'],
     cofre:['Cofre','Suas contas, chips e chaves PIX de contingência, salvos neste dispositivo.'],
     metaads:['Meta Ads','Acompanhe suas campanhas, contas de anúncio e BMs — investimento, retorno e ROAS num lugar só.'],
     admin:['Administração','Todos os usuários do sistema — visão geral de contas, faturamento e atividade.'],
@@ -3604,6 +3724,7 @@ function switchView(v){
   if(v==='admin') renderAdmin();
   if(v==='afiliados') renderAffiliates();
   if(v==='produtos') renderProductsView();
+  if(v==='config') renderConfig();
 }
 $('#nav').addEventListener('click',e=>{
   const btn=e.target.closest('button'); if(!btn)return;
@@ -3612,6 +3733,32 @@ $('#nav').addEventListener('click',e=>{
   if(btn.dataset.v==='afiliados'){ try{ window.open('afiliados.html','_blank','noopener'); }catch(err){ location.href='afiliados.html'; } return; }
   switchView(btn.dataset.v);
 });
+/* ----- Configurações: tema + imposto ----- */
+function applyTheme(t){
+  t=(t==='light'||t==='tig')?t:'dark';
+  const r=document.documentElement;
+  if(t==='dark') r.removeAttribute('data-theme'); else r.setAttribute('data-theme',t);
+  if(typeof ui!=='undefined'){ ui.theme=t; saveUI(); }
+}
+function renderConfig(){
+  const cur=(typeof ui!=='undefined'&&ui.theme)||'dark';
+  $$('#themeGrid .theme-opt').forEach(b=>b.classList.toggle('on', b.dataset.themeOpt===cur));
+  const f=$('#cfgImposto'); if(f) f.value=impostoPctVal();
+}
+(function(){
+  const grid=$('#themeGrid');
+  if(grid) grid.addEventListener('click',e=>{
+    const b=e.target.closest('.theme-opt'); if(!b) return;
+    applyTheme(b.dataset.themeOpt); renderConfig(); toast('Tema aplicado');
+  });
+  const f=$('#cfgImposto');
+  if(f) f.addEventListener('change',()=>{
+    const n=parseFloat(String(f.value).replace(',','.'));
+    if(isNaN(n)||n<0||n>100){ toast('Valor inválido'); f.value=impostoPctVal(); return; }
+    ui.impostoPct=n; saveUI(); render(); toast('Imposto sobre ADS: '+impostoPctLabel());
+  });
+  try{ applyTheme((typeof ui!=='undefined'&&ui.theme)||'dark'); }catch(e){}
+})();
 /* ----- tab bar inferior + drawer (mobile) ----- */
 function openDrawer(){ document.body.classList.add('drawer-open'); }
 function closeDrawer(){ document.body.classList.remove('drawer-open'); }
@@ -3747,7 +3894,7 @@ document.body.addEventListener('input',e=>{
     const ads=adsOf(date), sales=salesOf(date), others=expensesOf(date).filter(e=>e.cat!==ADS);
     const rec=sum(sales,'value'), gasto=sum(ads,'value');
     const lucro=rec-gasto;
-    const imposto=gasto*0.14;
+    const imposto=gasto*impostoRate();
     const lucEl=cell.querySelector('.d-luc');
     lucEl.textContent=(gasto||rec)?brlShort(lucro):'—';
     lucEl.className='d-luc '+(lucro>=0?'pos':'neg');

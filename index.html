@@ -4348,8 +4348,9 @@ function renderTrialBadge(){
   let b=$('#subBadge');
   if(subState.plan==='active'){
     if(!b){ b=document.createElement('div'); b.id='subBadge'; foot.insertBefore(b, foot.firstChild); }
-    b.className='sub-badge ok';
-    b.innerHTML=`<span class="sb-dot"></span><span class="sb-txt">Assinatura ativa · ${subState.daysLeft} dia${subState.daysLeft===1?'':'s'}</span>`;
+    const d=subState.daysLeft, near=d<=3; /* só conta os dias quando faltam 3 ou menos p/ renovar */
+    b.className='sub-badge '+(near?'warn':'ok');
+    b.innerHTML=`<span class="sb-dot"></span><span class="sb-txt">${near?('Renova em '+d+' dia'+(d===1?'':'s')):'Assinatura ativa'}</span>`;
   } else if(b){ b.remove(); }
   /* botão "Assinar agora" — durante o teste (acima do Sair) */
   let cta=$('#subCta');

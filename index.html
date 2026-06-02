@@ -745,6 +745,14 @@
   .auth-sub{color:var(--muted);font-size:13.5px;margin-bottom:18px;line-height:1.5}
   .auth-msg{background:rgba(240,121,95,.1);border:1px solid rgba(240,121,95,.25);color:var(--red);font-size:12.5px;padding:9px 12px;border-radius:10px;margin-bottom:14px;line-height:1.45}
   .auth-card .field input:focus{box-shadow:0 0 0 3px rgba(188,232,74,.13)}
+  .pw-wrap{position:relative;display:flex}
+  .pw-wrap input{width:100%;padding-right:44px}
+  .pw-eye{position:absolute;right:5px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--faint);cursor:pointer;padding:7px;display:flex;border-radius:8px;transition:color .15s}
+  .pw-eye:hover{color:var(--muted)}
+  .pw-eye.on{color:var(--accent)}
+  .pw-eye svg{width:18px;height:18px}
+  .field-hint{display:block;font-size:10.5px;color:var(--faint);margin-top:5px}
+  .field-hint b{color:var(--muted);font-family:'JetBrains Mono',monospace}
   .auth-switch{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
   .auth-switch a{color:var(--accent);text-decoration:none;font-weight:600}
   .auth-switch a:hover{text-decoration:underline}
@@ -794,8 +802,10 @@
   .tour-overlay{position:fixed;inset:0;z-index:150}
   .tour-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(6,7,10,.74);outline:2px solid var(--accent);outline-offset:0;pointer-events:none;transition:top .3s cubic-bezier(.3,.85,.3,1),left .3s cubic-bezier(.3,.85,.3,1),width .3s,height .3s}
   .tour-tip{position:fixed;width:300px;max-width:calc(100vw - 20px);background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px;box-shadow:0 30px 70px -24px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.05);z-index:151}
+  .tour-x{position:absolute;top:9px;right:9px;background:none;border:none;color:var(--faint);font-size:15px;cursor:pointer;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;line-height:1;transition:.15s}
+  .tour-x:hover{background:var(--surface2);color:var(--text)}
   .tour-step{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:700;margin-bottom:6px;letter-spacing:.04em}
-  .tour-tip h4{font-family:'Space Grotesk',sans-serif;font-size:16.5px;font-weight:600;margin-bottom:5px}
+  .tour-tip h4{font-family:'Space Grotesk',sans-serif;font-size:16.5px;font-weight:600;margin-bottom:5px;padding-right:22px}
   .tour-tip p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:15px}
   .tour-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .tour-skip{background:none;border:none;color:var(--faint);font:inherit;font-size:12.5px;cursor:pointer;padding:6px 2px}
@@ -912,6 +922,20 @@
   .bank-dot{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:.15s;padding:0}
   .bank-dot.on{border-color:var(--text);transform:scale(1.14)}
   @media(max-width:560px){.cc-grid{grid-template-columns:1fr}}
+  /* Cofre: as abas internas agora vivem na barra lateral */
+  #vaultMain > .sec-head > .vtabs{display:none}
+  /* Admin — modal de gerência (escolher dias, recusar, remover) */
+  .am-days{display:flex;flex-wrap:wrap;gap:7px}
+  .am-day{background:var(--bg);border:1px solid var(--border);color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:9px;cursor:pointer;transition:.15s}
+  .am-day:hover{border-color:var(--accent-dim);color:var(--text)}
+  .am-day.on{background:var(--accent);border-color:var(--accent);color:#0c1206}
+  .am-sep{height:1px;background:var(--border);margin:18px 0 14px}
+  .am-danger{display:flex;gap:9px;flex-wrap:wrap}
+  .am-no{flex:1;min-width:130px;justify-content:center;color:var(--red)!important;border-color:rgba(240,121,95,.35)!important}
+  .am-no:hover{border-color:var(--red)!important;background:rgba(240,121,95,.08)}
+  .role-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.02em;padding:2px 7px;border-radius:6px;margin-left:5px;vertical-align:middle;background:rgba(138,123,255,.16);color:#a99bff}
+  .admin-group-h{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;margin:22px 0 10px}
+  .admin-group-h .gc{font-size:11px;color:var(--faint);font-weight:500}
 </style>
 </head>
 <body>
@@ -932,8 +956,12 @@
       <button data-v="metaads"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span> Meta Ads</button>
       <button data-v="webhook"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span> Webhook</button>
       <button data-v="afiliados"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></span> Indique e Ganhe</button>
+      <div class="nav-section">Cofre</div>
+      <button data-cofre="creds"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Contas</button>
+      <button data-cofre="chips"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg></span> Chips / WhatsApp</button>
+      <button data-cofre="pix"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg></span> Chaves PIX</button>
+      <button data-cofre="company"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg></span> Empresa</button>
       <div class="nav-section">Sistema</div>
-      <button data-v="cofre"><span class="ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Cofre</button>
     </nav>
     <div class="side-foot"></div>
   </aside>
@@ -1632,7 +1660,7 @@ const SUB_DAYS = 30;
 const SUB_PRICE_LABEL = 'R$ 47/mês';   // ← troque pelo seu preço
 const SUB_CHECKOUT_URL = '';           // ← cole aqui seu link de pagamento
 const REQUIRE_APPROVAL = true;         // novos cadastros precisam ser aceitos por você no Admin
-let subState = null, authAccessUntil = null, authApproved = false;
+let subState = null, authAccessUntil = null, authApproved = false, authRole = 'user', authRejected = false;
 const ENABLE_LOGIN = true;
 const AUTH_MODE = SUPA_ENABLED ? 'supa' : (ENABLE_LOGIN ? 'local' : 'none');
 const LUSERS_KEY='tignfy_users_v1', LSESS_KEY='tignfy_session_v1', LDATA_PREFIX='tignfy_data_';
@@ -3516,6 +3544,7 @@ function metaAppIdModal(){
 /* ---- events ---- */
 function switchView(v){
   $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  $$('#nav button[data-cofre]').forEach(b=>b.classList.toggle('on', v==='cofre' && typeof vTab!=='undefined' && b.dataset.cofre===vTab));
   /* sincroniza a tab bar inferior (mobile) */
   const PRIMARY=['dash','calendario','vendas','despesas'];
   $$('.mtab-btn[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
@@ -3546,6 +3575,7 @@ function switchView(v){
 $('#nav').addEventListener('click',e=>{
   const btn=e.target.closest('button'); if(!btn)return;
   closeDrawer();
+  if(btn.dataset.cofre){ vTab=btn.dataset.cofre; ui.vtab=vTab; saveUI(); switchView('cofre'); renderVault(); return; }
   if(btn.dataset.v==='afiliados'){ try{ window.open('afiliados.html','_blank','noopener'); }catch(err){ location.href='afiliados.html'; } return; }
   switchView(btn.dataset.v);
 });
@@ -3751,6 +3781,7 @@ document.body.addEventListener('click',e=>{
   const ebk=e.target.closest('[data-edit-bank]'); if(ebk){bankModal(ebk.dataset.editBank);return}
   const gsub=e.target.closest('[data-grant-sub]'); if(gsub){ adminGrantSub(gsub.dataset.grantSub, +gsub.dataset.grantDays||30); return; }
   const gap=e.target.closest('[data-approve]'); if(gap){ adminApprove(gap.dataset.approve); return; }
+  const gmn=e.target.closest('[data-manage]'); if(gmn){ adminUserModal(gmn.dataset.manage, gmn.dataset.email, gmn.dataset.pending==='1', gmn.dataset.role||'user'); return; }
 
   // ---- meta ads ----
   const gbm=e.target.closest('[data-goto-bm]'); if(gbm){mTab='bms';ui.mtab='bms';saveUI();metaSearch.bms='';if($('#searchBMs'))$('#searchBMs').value='';renderMeta();return}
@@ -4082,18 +4113,18 @@ function nameModal(isOnboarding){
 /* ===================== GUIA DE PRIMEIRA VEZ (tour interativo) ===================== */
 const TOUR_KEY='tignfy_tour_v1';
 const TOUR_STEPS=[
-  {sel:null,title:'Bem-vindo ao Tigudash 👋',text:'Em 30 segundos te mostro as áreas principais. Pode pular quando quiser.'},
+  {sel:null,title:'Bem-vindo ao Tigudash! 👋',text:'Que bom ter você aqui! Você tem <b>7 dias grátis</b> para testar tudo. Em 30 segundos te mostro as áreas principais — pode pular quando quiser.'},
   {sel:'#nav button[data-v="dash"]',title:'Resumo',text:'Sua visão geral do dia e do período: lucro, vendas, gasto em ADS e ROAS num relance.'},
   {sel:'#nav button[data-v="calendario"]',title:'Diário',text:'Lance a receita e o gasto de cada dia — o painel calcula Lucro, ROAS, ROI e imposto sozinho.'},
   {sel:'#nav button[data-v="despesas"]',title:'Despesas',text:'Gastos pontuais ou recorrentes (que se repetem todo mês, automaticamente).'},
   {sel:'#nav button[data-v="produtos"]',title:'Produtos & Esteira',text:'Cadastre produtos e use a Esteira pra validar do Teste até a Escala — arraste os cards, dia a dia.'},
   {sel:'#nav button[data-v="metaads"]',title:'Meta Ads',text:'Conecte o Facebook e veja suas campanhas ao vivo: investido, ROAS e CPA.'},
-  {sel:'#nav button[data-v="cofre"]',title:'Cofre',text:'Guarde logins, chips/WhatsApp e chaves PIX de contingência — tudo seguro neste aparelho.'},
+  {sel:'#nav button[data-cofre="creds"]',title:'Cofre',text:'Na seção Cofre: suas contas, chips/WhatsApp, chaves PIX e os dados da empresa — tudo organizado.'},
   {sel:null,title:'Tudo pronto! 🚀',text:'Explore à vontade. Pra rever este guia, clique no “?” no canto da tela.'}
 ];
 /* versão do tour pro mobile: aponta pra barra inferior (o menu lateral fica escondido no drawer) */
 const TOUR_STEPS_MOBILE=[
-  {sel:null,title:'Bem-vindo ao Tigudash 👋',text:'Em 20 segundos te mostro como navegar. Pode pular quando quiser.'},
+  {sel:null,title:'Bem-vindo ao Tigudash! 👋',text:'Que bom ter você aqui! Você tem <b>7 dias grátis</b> para testar tudo. Em 20 segundos te mostro como navegar — pode pular quando quiser.'},
   {sel:'.mtab-btn[data-v="dash"]',title:'Resumo',text:'Sua visão geral: lucro, vendas, gasto em ADS e a meta do dia.'},
   {sel:'.mtab-btn[data-v="calendario"]',title:'Diário',text:'Seu dia a dia por data — Lucro, ROAS, ROI e imposto calculados sozinhos.'},
   {sel:'.mtab-btn[data-v="vendas"]',title:'Vendas',text:'Tudo que entra, com filtros por produto e por período.'},
@@ -4129,8 +4160,9 @@ function renderTourStep(){
   } else { tip='left:50%;top:50%;transform:translate(-50%,-50%)'; }
   const last=tourIdx===tourSet.length-1;
   o.innerHTML=`${spot}<div class="tour-tip" style="${tip}">
+    <button class="tour-x" data-tour="skip" aria-label="Fechar guia">✕</button>
     <div class="tour-step">${tourIdx+1} / ${tourSet.length}</div>
-    <h4>${esc(step.title)}</h4><p>${esc(step.text)}</p>
+    <h4>${esc(step.title)}</h4><p>${step.text}</p>
     <div class="tour-actions">
       <button class="tour-skip" data-tour="skip">Pular guia</button>
       <div style="display:flex;gap:8px">${tourIdx>0?'<button class="btn ghost small" data-tour="prev">Voltar</button>':''}<button class="btn small" data-tour="next">${last?'Concluir':'Próximo →'}</button></div>
@@ -4170,27 +4202,31 @@ async function initAuth(){
   renderAuthGate('login','');
 }
 async function onAuthed(user){
-  authUser={id:user.id,email:user.email||'',created:user.created_at||null};
+  authUser={id:user.id,email:user.email||'',created:user.created_at||null,meta:(user.user_metadata||{})};
   isAdmin = !!(ADMIN_EMAIL && authUser.email && authUser.email.toLowerCase()===ADMIN_EMAIL.toLowerCase());
   await loadUserData(authUser.created);
+  if(authRole==='admin') isAdmin=true; /* admin de equipe também enxerga o painel */
   subState = computeSub(authUser.created, authAccessUntil);
   hideAuthGate();
+  if(!isAdmin && authRejected){ renderPendingScreen('', true); return; }
   if(!isAdmin && REQUIRE_APPROVAL && !authApproved){ renderPendingScreen(); return; }
   if(!isAdmin && subState && !subState.hasAccess){ renderPaywall(); return; }
   bootApp();
   renderTrialBadge();
 }
 async function loadUserData(created){
-  authAccessUntil=null; authApproved=false;
+  authAccessUntil=null; authApproved=false; authRole='user'; authRejected=false;
   /* tenta com as colunas novas; se ainda não existirem no banco, degrada sem quebrar */
-  const sels=['data,access_until,approved','data,access_until','data'];
-  let row=null, used=2;
+  const sels=['data,access_until,approved,rejected,role','data,access_until,approved','data,access_until','data'];
+  let row=null, used=3;
   for(let i=0;i<sels.length;i++){
     try{ const r=await supa.from('app_state').select(sels[i]).eq('user_id',authUser.id).maybeSingle(); if(r.error) throw r.error; row=r.data; used=i; break; }
     catch(e){ /* tenta o próximo */ }
   }
-  const hasApprovedCol = used===0;
-  const hasAccessCol = used<=1;
+  const hasExtra = used===0;
+  const hasApprovedCol = used<=1;
+  const hasAccessCol = used<=2;
+  if(row){ authRole = hasExtra ? (row.role||'user') : 'user'; authRejected = hasExtra ? !!row.rejected : false; }
   if(row&&row.data){
     db=row.data;
     authAccessUntil = (hasAccessCol && row.access_until) || null;
@@ -4202,7 +4238,11 @@ async function loadUserData(created){
   if(!hasApprovedCol) authApproved=true; /* sem a coluna ainda → não bloqueia ninguém */
   if(!db.account||typeof db.account!=='object') db.account={};
   if(!db.account.signupAt) db.account.signupAt = created || new Date().toISOString();
-  if(!db.account.ref) db.account.ref = refCodeFor(authUser.email);
+  const meta=(authUser&&authUser.meta)||{};
+  if(!db.account.name) db.account.name = window._signupName || meta.name || '';
+  if(!db.account.username) db.account.username = (window._signupUsername || meta.username || '').toLowerCase();
+  /* código de indicação = nome de usuário (link bonito); cai no hash se não tiver username */
+  if(!db.account.ref || db.account.ref===refCodeFor(authUser.email)) db.account.ref = db.account.username || refCodeFor(authUser.email);
   if(!row && window._signupRef && !db.account.refBy && window._signupRef!==db.account.ref){ db.account.refBy = window._signupRef; }
   if(!row){ try{ await supa.from('app_state').upsert({user_id:authUser.id,email:authUser.email,data:db,updated_at:new Date().toISOString()}); }catch(e){} }
 }
@@ -4229,16 +4269,16 @@ async function recheckAccess(){
   else { renderPaywall('Ainda não encontramos seu pagamento. Se acabou de pagar, aguarde alguns minutos e tente de novo.'); }
 }
 /* ----- tela de "aguardando aprovação" ----- */
-function renderPendingScreen(msg){
+function renderPendingScreen(msg, rejected){
   let g=$('#authGate'); if(!g){ g=document.createElement('div'); g.id='authGate'; document.body.appendChild(g); }
   g.className='auth-gate show';
   g.innerHTML=`<div class="auth-card">
     <div class="auth-logo">Tigudash</div>
-    <div class="pw-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-    <h2 class="auth-h">Cadastro recebido! ✓</h2>
-    <p class="auth-sub">Sua conta foi criada e está <b>aguardando a aprovação do administrador</b>. Assim que for liberada, você recebe acesso ao seu teste grátis de ${TRIAL_DAYS} dias.</p>
+    <div class="pw-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${rejected?'<circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/>':'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'}</svg></div>
+    <h2 class="auth-h">${rejected?'Cadastro não aprovado':'Cadastro recebido! ✓'}</h2>
+    <p class="auth-sub">${rejected?'Seu cadastro não foi aprovado pelo administrador. Se achar que houve um engano, fale com o suporte.':`Sua conta foi criada e está <b>aguardando a aprovação do administrador</b>. Assim que for liberada, você recebe acesso ao seu teste grátis de ${TRIAL_DAYS} dias.`}</p>
     ${msg?`<div class="auth-msg">${esc(msg)}</div>`:''}
-    <button class="btn" id="pe-refresh" style="width:100%;justify-content:center">Já fui aprovado — atualizar</button>
+    <button class="btn" id="pe-refresh" style="width:100%;justify-content:center">${rejected?'Tentar novamente':'Já fui aprovado — atualizar'}</button>
     <div class="auth-switch">Conta: ${esc(authUser?authUser.email:'')} · <a href="#" id="pe-out">Sair</a></div>
   </div>`;
   const rf=$('#pe-refresh'); if(rf) rf.onclick=async()=>{ rf.disabled=true; rf.textContent='Verificando…'; await recheckAccess(); };
@@ -4287,21 +4327,27 @@ function renderAuthGate(mode,msg){
   let g=$('#authGate'); if(!g){ g=document.createElement('div'); g.id='authGate'; document.body.appendChild(g);}
   g.className='auth-gate show';
   const signup=authMode==='signup';
+  const EYE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const pw=(id,ph,ac)=>`<div class="pw-wrap"><input id="${id}" type="password" autocomplete="${ac}" placeholder="${ph}"><button type="button" class="pw-eye" data-eye="${id}" tabindex="-1" aria-label="Mostrar senha">${EYE}</button></div>`;
   g.innerHTML=`<div class="auth-card">
     <div class="auth-logo">Tigudash</div>
     <h2 class="auth-h">${signup?'Criar sua conta':'Entrar no Tigudash'}</h2>
-    <p class="auth-sub">${signup?'Crie seu acesso para controlar suas finanças.':'Acesse seu painel financeiro.'}</p>
+    <p class="auth-sub">${signup?'Crie seu acesso e ganhe <b>7 dias grátis</b>.':'Acesse seu painel financeiro.'}</p>
     ${msg?`<div class="auth-msg">${esc(msg)}</div>`:''}
+    ${signup?`<div class="field"><label>Nome</label><input id="auth-name" autocomplete="name" placeholder="Seu nome"></div>`:''}
+    ${signup?`<div class="field"><label>Nome de usuário</label><input id="auth-username" autocomplete="off" placeholder="ex: joaosilva" style="text-transform:lowercase"><span class="field-hint">vira seu link de indicação: <b>?ref=usuario</b></span></div>`:''}
     <div class="field"><label>E-mail</label><input id="auth-email" type="email" autocomplete="email" placeholder="voce@email.com"></div>
-    <div class="field"><label>Senha</label><input id="auth-pass" type="password" autocomplete="${signup?'new-password':'current-password'}" placeholder="mínimo 6 caracteres"></div>
-    ${signup?`<div class="field"><label>Código de indicação <span class="lbl-opt">(opcional)</span></label><input id="auth-ref" autocomplete="off" placeholder="quem te indicou" value="${esc(pendingRef||'')}" style="text-transform:uppercase"></div>`:''}
+    <div class="field"><label>Senha</label>${pw('auth-pass','mínimo 6 caracteres',signup?'new-password':'current-password')}</div>
+    ${signup?`<div class="field"><label>Repetir senha</label>${pw('auth-pass2','digite a senha de novo','new-password')}</div>`:''}
+    ${signup?`<div class="field"><label>Código de indicação <span class="lbl-opt">(opcional)</span></label><input id="auth-ref" autocomplete="off" placeholder="quem te indicou" value="${esc(pendingRef||'')}" style="text-transform:lowercase"></div>`:''}
     <button class="btn" id="auth-go" style="width:100%;justify-content:center;margin-top:4px">${signup?'Criar conta':'Entrar'}</button>
     <div class="auth-switch">${signup?'Já tem conta?':'Ainda não tem conta?'} <a href="#" id="auth-toggle">${signup?'Entrar':'Criar agora'}</a></div>
   </div>`;
+  $$('.pw-eye').forEach(b=>b.onclick=()=>{ const inp=$('#'+b.dataset.eye); if(!inp)return; const show=inp.type==='password'; inp.type=show?'text':'password'; b.classList.toggle('on',show); });
   const tog=$('#auth-toggle'); if(tog) tog.onclick=e=>{e.preventDefault();renderAuthGate(signup?'login':'signup','');};
   const go=$('#auth-go'); if(go) go.onclick=doAuth;
-  ['#auth-email','#auth-pass'].forEach(sel=>{const i=$(sel); if(i) i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doAuth();}});});
-  const em=$('#auth-email'); if(em) try{em.focus();}catch(e){}
+  ['#auth-name','#auth-username','#auth-email','#auth-pass','#auth-pass2','#auth-ref'].forEach(sel=>{const i=$(sel); if(i) i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doAuth();}});});
+  const first=$(signup?'#auth-name':'#auth-email'); if(first) try{first.focus();}catch(e){}
 }
 async function doAuth(){
   if(AUTH_MODE==='local'){
@@ -4313,19 +4359,33 @@ async function doAuth(){
   if(!supa){ return; }
   const email=($('#auth-email').value||'').trim().toLowerCase();
   const pass=$('#auth-pass').value||'';
-  if(!email||!pass){ renderAuthGate(authMode,'Preencha e-mail e senha.'); return; }
-  if(pass.length<6){ renderAuthGate(authMode,'A senha precisa de pelo menos 6 caracteres.'); return; }
-  if(authMode==='signup'){ try{ window._signupRef=((($('#auth-ref')&&$('#auth-ref').value)||pendingRef||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'')); }catch(e){ window._signupRef=pendingRef||''; } }
+  if(authMode==='signup'){
+    const name=($('#auth-name').value||'').trim();
+    const username=($('#auth-username').value||'').trim().toLowerCase().replace(/[^a-z0-9_.]/g,'');
+    const pass2=$('#auth-pass2').value||'';
+    if(!name){ renderAuthGate('signup','Digite seu nome.'); return; }
+    if(!username||username.length<3){ renderAuthGate('signup','Escolha um nome de usuário (mín. 3 — letras, números, _ ou .).'); return; }
+    if(!email){ renderAuthGate('signup','Preencha o e-mail.'); return; }
+    if(pass.length<6){ renderAuthGate('signup','A senha precisa de pelo menos 6 caracteres.'); return; }
+    if(pass!==pass2){ renderAuthGate('signup','As senhas não são iguais — confira.'); return; }
+    window._signupName=name; window._signupUsername=username;
+    try{ window._signupRef=((($('#auth-ref')&&$('#auth-ref').value)||pendingRef||'').trim().toLowerCase().replace(/[^a-z0-9_.]/g,'')); }catch(e){ window._signupRef=pendingRef||''; }
+    const go=$('#auth-go'); if(go){ go.disabled=true; go.textContent='Aguarde…'; }
+    try{
+      const res=await supa.auth.signUp({email,password:pass,options:{data:{name,username}}});
+      if(res.error) throw res.error;
+      if(!(res.data&&res.data.session)){ renderAuthGate('login','Conta criada! ✓ Se pedir confirmação de e-mail, confirme e depois entre. Senão, já pode entrar.'); return; }
+      if(res.data&&res.data.user){ await onAuthed(res.data.user); } else { renderAuthGate('login',''); }
+    }catch(e){ renderAuthGate('signup', authErrPt((e&&e.message)||'')); }
+    return;
+  }
+  if(!email||!pass){ renderAuthGate('login','Preencha e-mail e senha.'); return; }
   const go=$('#auth-go'); if(go){ go.disabled=true; go.textContent='Aguarde…'; }
   try{
-    let res;
-    if(authMode==='signup') res=await supa.auth.signUp({email,password:pass});
-    else res=await supa.auth.signInWithPassword({email,password:pass});
+    const res=await supa.auth.signInWithPassword({email,password:pass});
     if(res.error) throw res.error;
-    if(authMode==='signup' && !(res.data&&res.data.session)){ renderAuthGate('login','Conta criada! ✓ Enviamos um link de confirmação para o seu e-mail — confirme (veja o spam também) e depois faça login aqui.'); return; }
-    if(res.data&&res.data.user){ await onAuthed(res.data.user); }
-    else { renderAuthGate('login',''); }
-  }catch(e){ renderAuthGate(authMode, authErrPt((e&&e.message)||'')); }
+    if(res.data&&res.data.user){ await onAuthed(res.data.user); } else { renderAuthGate('login',''); }
+  }catch(e){ renderAuthGate('login', authErrPt((e&&e.message)||'')); }
 }
 function authErrPt(m){
   if(/not confirmed|confirm/i.test(m)) return 'Confirme seu e-mail antes de entrar — enviamos um link de confirmação para a sua caixa de entrada (veja também o spam).';
@@ -4536,13 +4596,13 @@ async function renderAdmin(){
   body.innerHTML='<div class="empty"><span class="mc-spin"></span> Carregando usuários…</div>';
   if(!supa){ body.innerHTML='<div class="empty">Login não configurado.</div>'; return; }
   try{
-    const sels=['user_id,email,data,updated_at,access_until,approved','user_id,email,data,updated_at,access_until','user_id,email,data,updated_at'];
-    let data=null, used=2;
+    const sels=['user_id,email,data,updated_at,access_until,approved,rejected,role','user_id,email,data,updated_at,access_until,approved','user_id,email,data,updated_at,access_until','user_id,email,data,updated_at'];
+    let data=null, used=3;
     for(let i=0;i<sels.length;i++){
       try{ const r=await supa.from('app_state').select(sels[i]).order('updated_at',{ascending:false}).limit(1000); if(r.error) throw r.error; data=r.data; used=i; break; }
       catch(e){ if(i===sels.length-1) throw e; }
     }
-    const hasAccessCol=used<=1, hasApprovedCol=used===0;
+    const hasExtra=used===0, hasApprovedCol=used<=1, hasAccessCol=used<=2;
     const users=(data||[]).map(u=>{
       const d=u.data||{}; const sales=d.sales||[]; const exps=d.expenses||[];
       const fat=sales.reduce((a,s)=>a+(+s.value||0),0);
@@ -4551,7 +4611,7 @@ async function renderAdmin(){
       const accessISO=hasAccessCol?(u.access_until||null):null;
       const sub=computeSub((d.account&&d.account.signupAt)||u.updated_at, accessISO);
       const approved = isAdminRow ? true : (hasApprovedCol ? !!u.approved : true);
-      return { id:u.user_id, email:u.email||'—', updated:u.updated_at, nsales:sales.length, fat, gasto, lucro:fat-gasto, isMe:u.user_id===authUser.id, admin:isAdminRow, sub, approved, needsApproval:hasApprovedCol };
+      return { id:u.user_id, email:u.email||'—', username:(d.account&&d.account.username)||'', updated:u.updated_at, nsales:sales.length, fat, gasto, lucro:fat-gasto, isMe:u.user_id===authUser.id, admin:isAdminRow, role:hasExtra?(u.role||'user'):'user', rejected:hasExtra?!!u.rejected:false, sub, approved, needsApproval:hasApprovedCol };
     });
     adminRenderUsers(body, users, 'supa');
     if(!hasApprovedCol){ const n=body.querySelector('.admin-note'); if(n) n.innerHTML='⚠️ Rode o <b>SQL do trial/aprovação</b> no Supabase pra ativar o controle de acesso e o botão de aceitar cadastros.'; }
@@ -4566,17 +4626,57 @@ async function adminApprove(userId){
     renderAdmin();
   }catch(e){ toast('Falhou. Confira a coluna approved e a policy admin_update no Supabase.'); }
 }
-async function adminGrantSub(userId, addDays){
+async function adminGrantSub(userId, addDays){ return adminGrantAccess(userId, addDays, true); }
+/* modal de gerência do usuário: escolher dias, recusar, remover acesso */
+function adminUserModal(userId, email, pending, role){
+  modal.innerHTML=`<h3>Gerenciar acesso</h3>
+    <p style="color:var(--muted);font-size:13px;margin:-6px 0 16px;word-break:break-all">${esc(email)}</p>
+    <div class="field"><label>Cargo</label><select id="amRole"><option value="user"${role!=='admin'?' selected':''}>Usuário</option><option value="admin"${role==='admin'?' selected':''}>Admin de equipe</option></select><span class="field-hint">Admin de equipe enxerga e gerencia os outros usuários.</span></div>
+    <div class="field"><label>Liberar / estender acesso por</label>
+      <div class="am-days" id="amDays">${[7,15,30,60,90].map(d=>`<button type="button" class="am-day${d===30?' on':''}" data-d="${d}">${d} dias</button>`).join('')}</div>
+      <div class="grid2" style="margin-top:10px"><input id="amCustom" type="number" min="1" placeholder="ou nº de dias…"><button class="btn" id="amGrant" style="justify-content:center">Liberar acesso</button></div>
+    </div>
+    <div class="am-sep"></div>
+    <div class="am-danger">
+      ${pending?'<button class="btn ghost am-no" id="amReject">Recusar cadastro</button>':''}
+      <button class="btn ghost am-no" id="amRemove">Remover acesso</button>
+    </div>
+    <div class="modal-actions"><button class="btn ghost" onclick="closeModal()" style="flex:1;justify-content:center">Fechar</button></div>`;
+  const rs=$('#amRole'); if(rs) rs.onchange=()=>{ const nr=rs.value; closeModal(); adminSetRole(userId,nr); };
+  openModal();
+  let days=30;
+  $('#amDays').addEventListener('click',e=>{const b=e.target.closest('.am-day');if(!b)return;days=+b.dataset.d;$$('#amDays .am-day').forEach(x=>x.classList.toggle('on',x===b));const c=$('#amCustom');if(c)c.value='';});
+  $('#amGrant').onclick=()=>{ const c=+$('#amCustom').value; const d=c>0?Math.round(c):days; closeModal(); adminGrantAccess(userId,d); };
+  const rj=$('#amReject'); if(rj) rj.onclick=()=>{ if(confirm('Recusar este cadastro? A pessoa verá que não foi aprovada.')){ closeModal(); adminReject(userId); } };
+  $('#amRemove').onclick=()=>{ if(confirm('Remover o acesso desta pessoa? Ela perde o acesso na hora.')){ closeModal(); adminRemove(userId); } };
+}
+async function adminGrantAccess(userId, days, keepRejected){
   if(!supa || !isAdmin || !userId) return;
   try{
     let cur=0;
     try{ const r=await supa.from('app_state').select('access_until').eq('user_id',userId).maybeSingle(); if(r.data&&r.data.access_until) cur=new Date(r.data.access_until).getTime(); }catch(e){}
-    const until=new Date(Math.max(Date.now(),cur)+addDays*86400000).toISOString();
-    const { error } = await supa.from('app_state').update({access_until:until}).eq('user_id',userId);
+    const until=new Date(Math.max(Date.now(),cur)+days*86400000).toISOString();
+    const patch=keepRejected?{approved:true,access_until:until}:{approved:true,rejected:false,access_until:until};
+    let { error } = await supa.from('app_state').update(patch).eq('user_id',userId);
+    if(error && /rejected/.test(error.message||'')){ error=(await supa.from('app_state').update({approved:true,access_until:until}).eq('user_id',userId)).error; }
     if(error) throw error;
-    toast(`Liberado +${addDays} dias ✓`);
-    renderAdmin();
-  }catch(e){ toast('Falhou. Confira a coluna access_until e a policy admin_update no Supabase.'); }
+    toast(`Liberado ${days} dias ✓`); renderAdmin();
+  }catch(e){ toast('Falhou. Confira as colunas/policy no Supabase.'); }
+}
+async function adminReject(userId){
+  if(!supa || !isAdmin) return;
+  try{ const { error } = await supa.from('app_state').update({approved:false,rejected:true}).eq('user_id',userId); if(error) throw error; toast('Cadastro recusado'); renderAdmin(); }
+  catch(e){ toast('Falhou. Rode o SQL da coluna "rejected" no Supabase.'); }
+}
+async function adminRemove(userId){
+  if(!supa || !isAdmin) return;
+  try{ const { error } = await supa.from('app_state').update({approved:false,rejected:true,access_until:new Date(Date.now()-86400000).toISOString()}).eq('user_id',userId); if(error) throw error; toast('Acesso removido'); renderAdmin(); }
+  catch(e){ toast('Falhou. Confira a coluna "rejected" e a policy admin_update.'); }
+}
+async function adminSetRole(userId, role){
+  if(!supa || !isAdmin) return;
+  try{ const { error } = await supa.from('app_state').update({role:role}).eq('user_id',userId); if(error) throw error; toast(role==='admin'?'Agora é Admin de equipe ✓':'Cargo: Usuário ✓'); renderAdmin(); }
+  catch(e){ toast('Falhou. Rode o SQL da coluna "role" no Supabase.'); }
 }
 function subPill(sub){
   if(!sub) return '—';
@@ -4619,14 +4719,22 @@ function adminRenderUsers(body, users, mode){
         <div class="pi-acts"><button class="btn mini" data-approve="${esc(u.id)}">Aceitar</button></div>
       </div>`).join('')}</div>
     </div>` : '';
-  const headExtra = supaMode ? '<th class="ml-th c">Plano</th><th class="ml-th c">Ação</th>' : '<th class="ml-th c">Criado</th>';
-  const rowExtra = u => {
-    if(!supaMode) return `<td class="c">${rel(u.updated)}</td>`;
-    if(u.needsApproval && !u.approved && !u.admin)
-      return `<td class="c"><span class="pill warn">pendente</span></td><td class="c"><button class="btn mini" data-approve="${esc(u.id)}">Aceitar</button></td>`;
-    return `<td class="c">${subPill(u.sub)}</td><td class="c">${u.admin?'<span class="utag adm">admin</span>':`<button class="btn ghost mini" data-grant-sub="${esc(u.id)}" data-grant-days="30" title="Liberar 30 dias de acesso">+30 dias</button>`}</td>`;
+  const rowHtml = u => {
+    const isPending = u.needsApproval && !u.approved && !u.admin && !u.rejected;
+    const nameCell = `<td class="ml-name"><div class="mln-t">${u.username?('@'+esc(u.username)):esc(u.email)}${u.admin?' <span class="utag adm" title="Dono">dono</span>':(u.role==='admin'?' <span class="role-tag">adm equipe</span>':'')}${u.isMe?' <span class="utag me" title="Você">você</span>':''}</div>${u.username?`<div style="font-size:11px;color:var(--faint);margin-top:1px">${esc(u.email)}</div>`:''}</td>`;
+    const act = !supaMode ? `<td class="c">${rel(u.updated)}</td>`
+      : `<td class="c">${u.rejected?'<span class="pill danger">recusado</span>':(isPending?'<span class="pill warn">pendente</span>':subPill(u.sub))}</td><td class="c">${u.admin?'<span class="utag adm">dono</span>':`<button class="btn ghost mini" data-manage="${esc(u.id)}" data-email="${esc(u.email)}" data-pending="${isPending?'1':''}" data-role="${esc(u.role||'user')}">Gerenciar</button>`}</td>`;
+    return `<tr${isPending?' class="row-pending"':''}>${nameCell}<td class="num r">${u.nsales||'—'}</td><td class="num r pos">${u.fat?brlShort(u.fat):'—'}</td><td class="num r neg">${u.gasto?brlShort(u.gasto):'—'}</td><td class="num r ${u.lucro>=0?'pos':'neg'}">${(u.fat||u.gasto)?brlShort(u.lucro):'—'}</td>${act}</tr>`;
   };
+  const headExtra = supaMode ? '<th class="ml-th c">Plano</th><th class="ml-th c">Ação</th>' : '<th class="ml-th c">Criado</th>';
   const cols = supaMode?7:6;
+  const table = list => `<div class="ml-table-wrap"><table class="ml"><thead><tr><th class="ml-th">Usuário</th><th class="ml-th r">Vendas</th><th class="ml-th r">Faturamento</th><th class="ml-th r">Gasto</th><th class="ml-th r">Lucro</th>${headExtra}</tr></thead><tbody>${list.map(rowHtml).join('')||`<tr><td colspan="${cols}" class="empty" style="text-align:center">Ninguém aqui ainda.</td></tr>`}</tbody></table></div>`;
+  let tablesHtml;
+  if(supaMode){
+    const admins=users.filter(u=>u.admin||u.role==='admin');
+    const regular=users.filter(u=>!(u.admin||u.role==='admin'));
+    tablesHtml = `<div class="admin-group-h">👑 Admins de equipe <span class="gc">${admins.length}</span></div>${table(admins)}<div class="admin-group-h">🙋 Usuários <span class="gc">${regular.length}</span></div>${table(regular)}`;
+  } else tablesHtml = table(users);
   body.innerHTML=`
     <div class="meta-kpis" style="margin-bottom:18px">
       <div class="meta-kpi"><div class="mk-lbl">Usuários</div><div class="mk-val">${totUsers}</div><div class="mk-sub">contas no sistema</div></div>
@@ -4635,16 +4743,7 @@ function adminRenderUsers(body, users, mode){
       ${kpi4}
     </div>
     ${pendingBox}
-    <div class="ml-table-wrap"><table class="ml"><thead><tr>
-      <th class="ml-th">Usuário</th><th class="ml-th r">Vendas</th><th class="ml-th r">Faturamento</th><th class="ml-th r">Gasto</th><th class="ml-th r">Lucro</th>${headExtra}
-    </tr></thead><tbody>${users.map(u=>`<tr${(u.needsApproval&&!u.approved&&!u.admin)?' class="row-pending"':''}>
-      <td class="ml-name"><div class="mln-t">${esc(u.email)}${u.admin?' <span class="utag adm" title="Administrador">admin</span>':''}${u.isMe?' <span class="utag me" title="Você">você</span>':''}</div></td>
-      <td class="num r">${u.nsales||'—'}</td>
-      <td class="num r pos">${u.fat?brlShort(u.fat):'—'}</td>
-      <td class="num r neg">${u.gasto?brlShort(u.gasto):'—'}</td>
-      <td class="num r ${u.lucro>=0?'pos':'neg'}">${(u.fat||u.gasto)?brlShort(u.lucro):'—'}</td>
-      ${rowExtra(u)}
-    </tr>`).join('')||`<tr><td colspan="${cols}" class="empty" style="text-align:center">Nenhum usuário ainda.</td></tr>`}</tbody></table></div>
+    ${tablesHtml}
     <p class="admin-note" style="margin-top:14px;color:var(--faint);font-size:12px;max-width:680px">${note}</p>`;
 }
 

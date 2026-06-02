@@ -141,7 +141,8 @@ async function boot(){
   try{ const r=await supa.auth.getSession(); session=r.data&&r.data.session; }catch(e){}
   if(!session||!session.user){ return renderGate(); }
   const email=session.user.email||'';
-  const code=refCodeFor(email);
+  const username=(session.user.user_metadata&&session.user.user_metadata.username)||'';
+  const code=username||refCodeFor(email);
   const link=appBase()+'?ref='+code;
   let refs=[];
   try{ const {data,error}=await supa.rpc('referral_stats'); if(!error && Array.isArray(data)) refs=data.map(r=>({email:r.email,joined:r.joined,active:!!r.active})); }catch(e){}

@@ -3440,6 +3440,7 @@ function switchView(v){
 }
 $('#nav').addEventListener('click',e=>{
   const btn=e.target.closest('button'); if(!btn)return;
+  if(btn.dataset.v==='afiliados'){ try{ window.open('afiliados.html','_blank','noopener'); }catch(err){ location.href='afiliados.html'; } return; }
   switchView(btn.dataset.v);
 });
 
@@ -4071,6 +4072,8 @@ async function loadUserData(created){
   if(!hasApprovedCol) authApproved=true; /* sem a coluna ainda → não bloqueia ninguém */
   if(!db.account||typeof db.account!=='object') db.account={};
   if(!db.account.signupAt) db.account.signupAt = created || new Date().toISOString();
+  if(!db.account.ref) db.account.ref = refCodeFor(authUser.email);
+  if(!row && window._signupRef && !db.account.refBy && window._signupRef!==db.account.ref){ db.account.refBy = window._signupRef; }
   if(!row){ try{ await supa.from('app_state').upsert({user_id:authUser.id,email:authUser.email,data:db,updated_at:new Date().toISOString()}); }catch(e){} }
 }
 /* ----- cálculo de trial/assinatura ----- */
@@ -4182,6 +4185,7 @@ async function doAuth(){
   const pass=$('#auth-pass').value||'';
   if(!email||!pass){ renderAuthGate(authMode,'Preencha e-mail e senha.'); return; }
   if(pass.length<6){ renderAuthGate(authMode,'A senha precisa de pelo menos 6 caracteres.'); return; }
+  if(authMode==='signup'){ try{ window._signupRef=((($('#auth-ref')&&$('#auth-ref').value)||pendingRef||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'')); }catch(e){ window._signupRef=pendingRef||''; } }
   const go=$('#auth-go'); if(go){ go.disabled=true; go.textContent='Aguarde…'; }
   try{
     let res;

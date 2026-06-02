@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tigudash · Programa de Afiliados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0b0e; --surface:#14161c; --surface2:#1c1f27;
+    --text:#eef1f6; --muted:#969cab; --faint:#5e6573;
+    --accent:#bce84a; --accent-dim:#8aa838; --green:#6bd49a; --red:#f0795f;
+    --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.045);
+    --shadow:0 24px 60px -24px rgba(0,0,0,.85);
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1200px 720px at 88% -10%,rgba(188,232,74,.06),transparent 55%),radial-gradient(1000px 700px at -6% 112%,rgba(96,200,150,.045),transparent 55%),var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;line-height:1.5;letter-spacing:-.006em}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:22px 22px 60px}
+  /* topbar */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;color:var(--accent);letter-spacing:-.5px}
+  .brand .tag{font-size:11px;color:var(--muted);border-left:1px solid var(--border);padding-left:12px}
+  .top-right{display:flex;align-items:center;gap:12px}
+  .who{font-size:12.5px;color:var(--muted);text-align:right;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#0c1206;border:none;border-radius:10px;font:inherit;font-weight:600;font-size:13.5px;padding:9px 16px;cursor:pointer;text-decoration:none;transition:.15s}
+  .btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
+  .btn.ghost{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+  .btn.ghost:hover{border-color:var(--accent-dim);color:var(--accent)}
+  .btn.wa{background:#25d366;color:#06351a}
+  .btn svg{width:16px;height:16px}
+  /* hero link */
+  .hero{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:20px;padding:26px 28px;margin-bottom:18px;background:radial-gradient(120% 150% at 0% 0%,rgba(188,232,74,.15),transparent 52%),linear-gradient(135deg,rgba(20,26,14,.55),var(--surface));box-shadow:var(--shadow)}
+  .hero::after{content:'';position:absolute;right:-70px;top:-70px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(188,232,74,.16),transparent 70%)}
+  .hero h1{font-family:'Space Grotesk',sans-serif;font-size:25px;font-weight:700;letter-spacing:-.5px;margin-bottom:5px}
+  .hero p{color:var(--muted);font-size:13.5px;margin-bottom:18px;max-width:560px}
+  .hero p b{color:var(--accent)}
+  .linkbar{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;max-width:680px}
+  .linkbox{flex:1;min-width:230px;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:9px 14px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+  .linkbox .l{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint)}
+  .linkbox .u{font-family:'JetBrains Mono',monospace;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:13px}
+  .codechip{font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:1.5px;color:var(--accent);background:rgba(188,232,74,.07);border:1px dashed rgba(188,232,74,.4);padding:9px 15px;border-radius:10px;font-size:14px}
+  .codechip .cl{font-family:'Inter',sans-serif;font-weight:500;letter-spacing:0;color:var(--faint);font-size:12px;margin-right:8px}
+  /* kpi cards */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px 18px;position:relative;overflow:hidden}
+  .kpi .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;margin-bottom:11px}
+  .kpi .ic svg{width:18px;height:18px}
+  .kpi .klbl{font-size:11.5px;color:var(--muted);margin-bottom:5px}
+  .kpi .kval{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;letter-spacing:-.5px}
+  .kpi .ksub{font-size:11px;color:var(--faint);margin-top:4px}
+  .ic.amber{background:rgba(240,206,95,.13);color:#f0ce5f}
+  .ic.green{background:rgba(107,212,154,.13);color:var(--green)}
+  .ic.lime{background:rgba(188,232,74,.13);color:var(--accent)}
+  .ic.violet{background:rgba(138,123,255,.14);color:#a99bff}
+  /* generic card */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px 24px;margin-bottom:18px}
+  .card h2{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;margin-bottom:3px}
+  .card .csub{font-size:12.5px;color:var(--faint);margin-bottom:18px}
+  .grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+  @media(max-width:880px){.grid2{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:480px){.kpis{grid-template-columns:1fr}}
+  /* metas / nível */
+  .level-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+  .level-badge{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;padding:6px 14px;border-radius:999px}
+  .prog{height:9px;background:var(--bg);border:1px solid var(--border);border-radius:99px;overflow:hidden;margin:4px 0 7px}
+  .prog>span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent-dim),var(--accent));transition:width .6s ease}
+  .prog-lbl{font-size:12px;color:var(--muted);margin-bottom:18px}
+  .tier{display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid var(--border)}
+  .tier:last-child{border-bottom:none}
+  .tier-dot{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:15px;flex-shrink:0}
+  .tier-main{flex:1;min-width:0}
+  .tier-t{font-size:13.5px;font-weight:600}
+  .tier-s{font-size:12px;color:var(--muted)}
+  .tier-done{font-size:11.5px;font-weight:700;color:var(--green);flex-shrink:0}
+  .tier.locked{opacity:.5}
+  /* chart */
+  .chart-wrap{position:relative;width:100%}
+  svg.chart{width:100%;height:200px;display:block}
+  .chart-total{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent);font-size:15px;display:flex;align-items:center;gap:6px}
+  /* recent list */
+  .rec{display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid var(--border)}
+  .rec:last-child{border-bottom:none}
+  .rec-ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;background:rgba(188,232,74,.1);color:var(--accent)}
+  .rec-ic svg{width:16px;height:16px}
+  .rec-main{flex:1;min-width:0}
+  .rec-t{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rec-d{font-size:11.5px;color:var(--faint)}
+  .rec-val{text-align:right;flex-shrink:0}
+  .rec-amt{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);font-size:14px}
+  .rec-st{font-size:11px}
+  .pill{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px}
+  .pill.on{background:rgba(107,212,154,.14);color:var(--green)}
+  .pill.off{background:rgba(255,255,255,.06);color:var(--muted)}
+  .empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 10px}
+  .empty b{color:var(--text)}
+  /* loading / gate */
+  .center{min-height:80vh;display:grid;place-items:center;text-align:center;padding:20px}
+  .spin{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 16px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:11px;font-size:13.5px;font-weight:500;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .note{font-size:11.5px;color:var(--faint);max-width:640px;margin-top:6px}
+</style>
+</head>
+<body>
+<div id="app" class="center"><div><div class="spin"></div><div style="color:var(--muted)">Carregando seu painel de afiliado…</div></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ====== CONFIG (mesma do app principal) ====== */
+const SUPABASE_URL = 'https://mazcikaibqlyqtwzozzg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hemNpa2FpYnFseXF0d3pvenpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MDEyNDMsImV4cCI6MjA5NTk3NzI0M30.iVWUIqjvNGOTmDYc0n0pJ7ErSvK7AsuxhQ5L6ExCp9M';
+const REF_REWARD = 25;
+const TIERS = [
+  {name:'Bronze', min:0,  color:'#cd7f32', icon:'🥉', perk:'R$ 25 por indicado ativo'},
+  {name:'Prata',  min:10, color:'#c4cad6', icon:'🥈', perk:'R$ 30 por indicado + bônus'},
+  {name:'Ouro',   min:25, color:'#e5b44c', icon:'🥇', perk:'R$ 40 por indicado + 1 mês grátis'},
+];
+const MES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+/* ====== helpers (mesmo cálculo de código do app) ====== */
+function lhash(s){ s=String(s); let h=5381; for(let i=0;i<s.length;i++){ h=((h<<5)+h)+s.charCodeAt(i); h=h&0xffffffff; } return 'h'+(h>>>0).toString(36); }
+function refCodeFor(email){ email=(email||'').toLowerCase(); if(!email) return 'TIGUDASH'; return ('TG'+lhash(email).slice(1,7)).toUpperCase().replace(/[^A-Z0-9]/g,'').padEnd(8,'X').slice(0,8); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function brl(n){ return 'R$ '+Math.round(n).toLocaleString('pt-BR'); }
+function appBase(){ return location.origin + location.pathname.replace(/[^/]*$/, ''); }
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+
+let supa=null;
+async function boot(){
+  try{ supa=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY); }
+  catch(e){ return renderGate('Não foi possível conectar. Tente recarregar.'); }
+  let session=null;
+  try{ const r=await supa.auth.getSession(); session=r.data&&r.data.session; }catch(e){}
+  if(!session||!session.user){ return renderGate(); }
+  const email=session.user.email||'';
+  const code=refCodeFor(email);
+  const link=appBase()+'?ref='+code;
+  let refs=[];
+  try{ const {data,error}=await supa.rpc('referral_stats'); if(!error && Array.isArray(data)) refs=data.map(r=>({email:r.email,joined:r.joined,active:!!r.active})); }catch(e){}
+  render({email,code,link,refs});
+}
+
+function renderGate(msg){
+  document.getElementById('app').innerHTML=
+    `<div><div style="font-family:'Space Grotesk';font-size:22px;color:var(--accent);margin-bottom:8px">Tigudash</div>
+     <p style="color:var(--muted);margin-bottom:18px">${esc(msg||'Faça login no painel para ver suas indicações.')}</p>
+     <a class="btn" href="${appBase()}">Ir para o login</a></div>`;
+}
+
+function tierOf(n){ let cur=TIERS[0]; for(const t of TIERS){ if(n>=t.min) cur=t; } const idx=TIERS.indexOf(cur); const next=TIERS[idx+1]||null; return {cur,next}; }
+
+function buildChart(values){
+  const W=560,H=200,pad=28; const max=Math.max(10,...values);
+  const n=values.length, stepX=(W-pad*2)/(n-1);
+  const pts=values.map((v,i)=>[pad+i*stepX, H-pad-(v/max)*(H-pad*2)]);
+  const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const area=line+` L ${pad+(n-1)*stepX} ${H-pad} L ${pad} ${H-pad} Z`;
+  const dots=pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.2" fill="#bce84a"/>`).join('');
+  const labels=MES.slice(-6); // placeholder, overwritten below
+  return {W,H,pad,line,area,dots,pts,stepX};
+}
+
+function render({email,code,link,refs}){
+  const total=refs.length;
+  const active=refs.filter(r=>r.active).length;
+  const aReceber=active*REF_REWARD;
+  const {cur,next}=tierOf(total);
+  const prog = next? Math.min(100, Math.round(total/next.min*100)) : 100;
+  const progLbl = next? `${total} de ${next.min} indicados para o nível ${next.name}` : 'Você atingiu o nível máximo! 🎉';
+
+  /* chart: ganhos acumulados nos últimos 6 meses (por mês de entrada do indicado ativo) */
+  const now=new Date(); const months=[];
+  for(let i=5;i>=0;i--){ const d=new Date(now.getFullYear(), now.getMonth()-i, 1); months.push({y:d.getFullYear(),m:d.getMonth(),val:0}); }
+  refs.forEach(r=>{ if(!r.active||!r.joined) return; const d=new Date(r.joined); const slot=months.find(mm=>mm.y===d.getFullYear()&&mm.m===d.getMonth()); if(slot) slot.val+=REF_REWARD; });
+  let run=0; const cumul=months.map(mm=>{ run+=mm.val; return run; });
+  const c=buildChart(cumul);
+  const axis=months.map((mm,i)=>`<text x="${(c.pad+i*c.stepX).toFixed(1)}" y="${c.H-7}" fill="#5e6573" font-size="11" text-anchor="middle" font-family="Inter">${MES[mm.m]}</text>`).join('');
+  const yMax=Math.max(10,...cumul);
+  const yLabels=[0,.5,1].map(f=>`<text x="6" y="${(c.H-c.pad-f*(c.H-c.pad*2)+4).toFixed(1)}" fill="#5e6573" font-size="10" font-family="JetBrains Mono">${brl(yMax*f)}</text>`).join('');
+
+  const tiers=TIERS.map(t=>{
+    const done=total>=t.min;
+    return `<div class="tier ${done?'':'locked'}">
+      <div class="tier-dot" style="background:${t.color}22">${t.icon}</div>
+      <div class="tier-main"><div class="tier-t">${t.name} <span style="color:var(--faint);font-weight:500">· ${t.min}+ indicados</span></div><div class="tier-s">${esc(t.perk)}</div></div>
+      ${done?'<span class="tier-done">ativo ✓</span>':''}
+    </div>`;
+  }).join('');
+
+  const recentes = refs.slice().sort((a,b)=>String(b.joined||'').localeCompare(String(a.joined||''))).slice(0,8);
+  const recHtml = recentes.length? recentes.map(r=>{
+    const dt=r.joined? new Date(r.joined).toLocaleDateString('pt-BR'):'—';
+    const mask=(()=>{ const i=String(r.email).indexOf('@'); if(i<1) return r.email; return r.email.slice(0,2)+'•••'+r.email.slice(i); })();
+    return `<div class="rec">
+      <div class="rec-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m17 11 2 2 4-4"/></svg></div>
+      <div class="rec-main"><div class="rec-t">${esc(mask)}</div><div class="rec-d">cadastrou em ${dt}</div></div>
+      <div class="rec-val"><div class="rec-amt">${r.active?'+'+brl(REF_REWARD):'—'}</div><div class="rec-st">${r.active?'<span class="pill on">ativo</span>':'<span class="pill off">cadastrado</span>'}</div></div>
+    </div>`;
+  }).join('') : `<div class="empty">Você ainda não tem indicados.<br><b>Compartilhe seu link</b> e comece a ganhar! 🚀</div>`;
+
+  const waMsg=encodeURIComponent(`Tô usando o Tigudash pra controlar minhas finanças de infoproduto e recomendo! Cria sua conta grátis com meu link: ${link}`);
+
+  document.getElementById('app').outerHTML = `<div class="wrap" id="app">
+    <div class="top">
+      <div class="brand"><span class="logo">Tigudash</span><span class="tag">Programa de Afiliados</span></div>
+      <div class="top-right"><div class="who">${esc(email)}</div><a class="btn ghost" href="${appBase()}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Voltar ao painel</a></div>
+    </div>
+
+    <div class="hero">
+      <h1>Indique e Ganhe 🎁</h1>
+      <p>Compartilhe seu link. A cada pessoa que criar conta e começar a usar o Tigudash, você ganha <b>${brl(REF_REWARD)}</b>.</p>
+      <div class="linkbar">
+        <div class="linkbox"><span class="l">Seu link de indicação</span><span class="u" id="linktxt">${esc(link)}</span></div>
+        <button class="btn" id="copybtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> Copiar link</button>
+      </div>
+      <div class="actions">
+        <span class="codechip"><span class="cl">Seu código</span>${esc(code)}</span>
+        <a class="btn wa" href="https://wa.me/?text=${waMsg}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.52 11.99c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18z"/></svg> WhatsApp</a>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="ic amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="klbl">Saldo a receber</div><div class="kval" style="color:#f0ce5f">${brl(aReceber)}</div><div class="ksub">${active} indicado(s) ativo(s)</div></div>
+      <div class="kpi"><div class="ic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg></div><div class="klbl">Indicados ativos</div><div class="kval" style="color:var(--green)">${active}</div><div class="ksub">já usando o painel</div></div>
+      <div class="kpi"><div class="ic lime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="klbl">Total de indicados</div><div class="kval">${total}</div><div class="ksub">criaram conta com seu link</div></div>
+      <div class="kpi"><div class="ic violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div><div class="klbl">Seu nível</div><div class="kval" style="color:${cur.color};font-size:20px">${cur.icon} ${cur.name}</div><div class="ksub">${esc(cur.perk)}</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px"><h2>Comissões</h2><span class="chart-total"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg> ${brl(cumul[cumul.length-1]||0)}</span></div>
+        <div class="csub">Ganhos acumulados nos últimos 6 meses</div>
+        <div class="chart-wrap"><svg class="chart" viewBox="0 0 ${c.W} ${c.H}" preserveAspectRatio="none">
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bce84a" stop-opacity=".28"/><stop offset="1" stop-color="#bce84a" stop-opacity="0"/></linearGradient></defs>
+          <path d="${c.area}" fill="url(#g1)"/>
+          <path d="${c.line}" fill="none" stroke="#bce84a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          ${c.dots}${axis}${yLabels}
+        </svg></div>
+      </div>
+      <div class="card">
+        <h2>Suas metas</h2>
+        <div class="csub">Suba de nível indicando mais pessoas</div>
+        <div class="level-head"><span class="level-badge" style="background:${cur.color}22;color:${cur.color}">${cur.icon} ${cur.name}</span></div>
+        <div class="prog"><span style="width:${prog}%"></span></div>
+        <div class="prog-lbl">${esc(progLbl)}</div>
+        ${tiers}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Indicados recentes</h2>
+      <div class="csub">As pessoas que entraram pelo seu link</div>
+      ${recHtml}
+      <p class="note">As comissões são pagas conforme as regras do programa. Dúvidas? Fale com o suporte do Tigudash.</p>
+    </div>
+  </div>`;
+
+  const cb=document.getElementById('copybtn');
+  if(cb) cb.onclick=()=>{ const done=()=>{ const o=cb.innerHTML; cb.innerHTML='Copiado ✓'; toast('Link copiado ✓'); setTimeout(()=>cb.innerHTML=o,1700); };
+    try{ navigator.clipboard.writeText(link).then(done,()=>{ const t=document.getElementById('linktxt'),r=document.createRange();r.selectNode(t);const s=getSelection();s.removeAllRanges();s.addRange(r);try{document.execCommand('copy')}catch(e){}s.removeAllRanges();done(); }); }catch(e){ toast('Selecione e copie o link.'); } };
+}
+
+boot();
+</script>
+</body>
+</html>

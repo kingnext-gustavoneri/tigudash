@@ -116,7 +116,7 @@
     background:linear-gradient(135deg, rgba(188,232,74,.06), rgba(255,255,255,.01) 60%), var(--surface);
     border:1px solid var(--border); border-radius:18px;
     padding:22px 26px; margin-bottom:18px;
-    display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:center;
+    display:block;
   }
   .hero-today.is-green{border-color:rgba(107,212,154,.35); background:linear-gradient(135deg, rgba(107,212,154,.10), rgba(255,255,255,.01) 60%), var(--surface)}
   .hero-today.is-yellow{border-color:rgba(229,180,76,.35); background:linear-gradient(135deg, rgba(229,180,76,.09), rgba(255,255,255,.01) 60%), var(--surface)}
@@ -136,7 +136,7 @@
   .hero-sub{color:var(--muted);font-size:13.5px;margin:0;max-width:520px;line-height:1.45}
 
   /* Barra de progresso da meta diária */
-  .hero-goal{margin-top:16px;max-width:540px}
+  .hero-goal{margin-top:16px;max-width:none}
   .hg-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
   .hg-lbl{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
   .hg-ic{width:14px;height:14px;color:var(--accent);flex:none}
@@ -1033,23 +1033,6 @@
             </div>
           </div>
         </div>
-        <div class="hero-right">
-          <div class="hero-metric">
-            <div class="hero-m-lbl">Vendas hoje</div>
-            <div class="hero-m-val pos" id="heroVendas">R$ 0</div>
-            <div class="hero-m-sub" id="heroVendasSub">0 vendas</div>
-          </div>
-          <div class="hero-metric">
-            <div class="hero-m-lbl">Gasto em ADS</div>
-            <div class="hero-m-val neg" id="heroAds">R$ 0</div>
-            <div class="hero-m-sub" id="heroAdsSub">break-even em —</div>
-          </div>
-          <div class="hero-metric">
-            <div class="hero-m-lbl">Lucro líquido <small>(já c/ imposto 14%)</small></div>
-            <div class="hero-m-val" id="heroLucro">R$ 0</div>
-            <div class="hero-m-sub" id="heroLucroSub">ROAS — · margem —</div>
-          </div>
-        </div>
       </div>
 
       <div class="period-bar">
@@ -1074,6 +1057,10 @@
           <div class="k-lbl">Faturamento</div><div class="k-val" id="kpiIn">R$ 0</div><div class="k-sub" id="kpiInSub">0 vendas no período</div>
         </div>
         <div class="kpi">
+          <div class="k-ic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5c-1.5 0-2.8 1.4-3 2-2.4-1-8.5-.7-10.5 2.5C4 11 4 13 5 14.5V18a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1h4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2.2c.7-.5 1.3-1.1 1.6-1.8H21a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1c-.3-.6-.6-1-1-1.5V5z"/><path d="M16 10h.01"/><path d="M2 9.5C2 8 3 8 3.5 8"/></svg></div>
+          <div class="k-lbl">Lucro líquido</div><div class="k-val" id="kpiProfit">R$ 0</div><div class="k-sub" id="kpiMargin">já c/ imposto 14%</div>
+        </div>
+        <div class="kpi">
           <div class="k-ic red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
           <div class="k-lbl">Investido em ADS</div><div class="k-val neg" id="kpiAds">R$ 0</div><div class="k-sub" id="kpiAdsSub">tráfego pago</div>
         </div>
@@ -1084,10 +1071,6 @@
         <div class="kpi">
           <div class="k-ic violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg></div>
           <div class="k-lbl">CPA</div><div class="k-val" id="kpiCpa">—</div><div class="k-sub">custo por venda</div>
-        </div>
-        <div class="kpi">
-          <div class="k-ic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5c-1.5 0-2.8 1.4-3 2-2.4-1-8.5-.7-10.5 2.5C4 11 4 13 5 14.5V18a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1h4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2.2c.7-.5 1.3-1.1 1.6-1.8H21a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1c-.3-.6-.6-1-1-1.5V5z"/><path d="M16 10h.01"/><path d="M2 9.5C2 8 3 8 3.5 8"/></svg></div>
-          <div class="k-lbl">Lucro líquido</div><div class="k-val" id="kpiProfit">R$ 0</div><div class="k-sub" id="kpiMargin">já c/ imposto 14%</div>
         </div>
       </div>
 
@@ -1913,14 +1896,7 @@ function render(){
   $('#heroStatusLbl').textContent=statusLbl;
   $('#heroTitle').textContent=statusTitle;
   $('#heroSub').textContent=statusSub;
-  $('#heroVendas').textContent=brl(todayFat);
-  $('#heroVendasSub').textContent=todaySales.length+(todaySales.length===1?' venda':' vendas');
-  $('#heroAds').textContent='-'+brl(todayAds);
-  $('#heroAdsSub').textContent = todayAds===0 ? 'sem ADS hoje' : (breakEvenFalta>0?'faltam '+brlShort(breakEvenFalta)+' p/ break-even':'break-even atingido ✓');
-  const hl=$('#heroLucro');
-  hl.textContent=(todayLucro<0?'-':'')+brl(Math.abs(todayLucro));
-  hl.className='hero-m-val '+(todayLucro>=0?'pos':'neg');
-  $('#heroLucroSub').textContent='ROAS '+(todayAds>0?todayRoas.toFixed(2)+'x':'—')+' · margem '+(todayFat>0?todayMargin+'%':'—');
+  // (mini-stats do hero removidos — dados já aparecem nos cards de KPI abaixo)
 
   // ---- Meta diária de faturamento ----
   const meta=+ui.metaDiaria||0;

@@ -808,6 +808,20 @@
   .tour-tip h4{font-family:'Space Grotesk',sans-serif;font-size:16.5px;font-weight:600;margin-bottom:5px;padding-right:22px}
   .tour-tip p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:15px}
   .tour-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  /* card de boas-vindas premium */
+  .tour-welcome{width:344px;max-width:calc(100vw - 28px);text-align:center;padding:28px 26px 22px;border:1px solid rgba(188,232,74,.32);
+    background:radial-gradient(125% 120% at 50% -10%, rgba(188,232,74,.18), transparent 55%), linear-gradient(180deg, rgba(22,28,15,.65), var(--surface));
+    box-shadow:0 40px 100px -30px rgba(0,0,0,.92), 0 0 70px -22px var(--glow)}
+  .tw-badge{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;font-weight:700;letter-spacing:.12em;color:var(--accent);background:rgba(188,232,74,.1);border:1px solid rgba(188,232,74,.3);padding:5px 12px;border-radius:999px;margin-bottom:16px}
+  .tw-ic{width:62px;height:62px;margin:0 auto 14px;display:grid;place-items:center;border-radius:18px;background:rgba(188,232,74,.1);border:1px solid rgba(188,232,74,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 30px -12px var(--glow)}
+  .tw-ic svg{width:30px;height:30px;color:var(--accent)}
+  .tour-welcome h3{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.4px;margin-bottom:7px}
+  .tour-welcome p{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0 auto 18px;max-width:280px}
+  .tour-welcome p b{color:var(--accent);font-weight:700}
+  .tw-days{display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:20px;padding:12px;border:1px dashed rgba(188,232,74,.35);border-radius:14px;background:rgba(188,232,74,.05)}
+  .tw-days .n{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;color:var(--accent);line-height:.9;text-shadow:0 0 30px var(--glow)}
+  .tw-days .l{font-size:12.5px;color:var(--muted);font-weight:600;text-align:left;line-height:1.3}
+  .tour-welcome .tour-actions{justify-content:center;gap:16px;margin-top:4px}
   .tour-skip{background:none;border:none;color:var(--faint);font:inherit;font-size:12.5px;cursor:pointer;padding:6px 2px}
   .tour-skip:hover{color:var(--text)}
   .tour-help{position:fixed;right:18px;bottom:18px;z-index:80;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--accent);font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;cursor:pointer;box-shadow:0 14px 34px -16px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05);transition:.15s}
@@ -4113,7 +4127,7 @@ function nameModal(isOnboarding){
 /* ===================== GUIA DE PRIMEIRA VEZ (tour interativo) ===================== */
 const TOUR_KEY='tignfy_tour_v1';
 const TOUR_STEPS=[
-  {sel:null,title:'Bem-vindo ao Tigudash! 👋',text:'Que bom ter você aqui! Você tem <b>7 dias grátis</b> para testar tudo. Em 30 segundos te mostro as áreas principais — pode pular quando quiser.'},
+  {sel:null,premium:true,title:'Bem-vindo ao Tigudash! 👋',text:'Você tem 7 dias grátis para testar tudo.'},
   {sel:'#nav button[data-v="dash"]',title:'Resumo',text:'Sua visão geral do dia e do período: lucro, vendas, gasto em ADS e ROAS num relance.'},
   {sel:'#nav button[data-v="calendario"]',title:'Diário',text:'Lance a receita e o gasto de cada dia — o painel calcula Lucro, ROAS, ROI e imposto sozinho.'},
   {sel:'#nav button[data-v="despesas"]',title:'Despesas',text:'Gastos pontuais ou recorrentes (que se repetem todo mês, automaticamente).'},
@@ -4124,7 +4138,7 @@ const TOUR_STEPS=[
 ];
 /* versão do tour pro mobile: aponta pra barra inferior (o menu lateral fica escondido no drawer) */
 const TOUR_STEPS_MOBILE=[
-  {sel:null,title:'Bem-vindo ao Tigudash! 👋',text:'Que bom ter você aqui! Você tem <b>7 dias grátis</b> para testar tudo. Em 20 segundos te mostro como navegar — pode pular quando quiser.'},
+  {sel:null,premium:true,title:'Bem-vindo ao Tigudash! 👋',text:'Você tem 7 dias grátis para testar tudo.'},
   {sel:'.mtab-btn[data-v="dash"]',title:'Resumo',text:'Sua visão geral: lucro, vendas, gasto em ADS e a meta do dia.'},
   {sel:'.mtab-btn[data-v="calendario"]',title:'Diário',text:'Seu dia a dia por data — Lucro, ROAS, ROI e imposto calculados sozinhos.'},
   {sel:'.mtab-btn[data-v="vendas"]',title:'Vendas',text:'Tudo que entra, com filtros por produto e por período.'},
@@ -4158,6 +4172,23 @@ function renderTourStep(){
     if(ty+210>window.innerHeight) ty=Math.max(10,window.innerHeight-220);
     tip=`left:${Math.min(tx,window.innerWidth-tipW-10)}px;top:${ty}px`;
   } else { tip='left:50%;top:50%;transform:translate(-50%,-50%)'; }
+  /* card de boas-vindas premium e personalizado */
+  if(step.premium){
+    const nm=((db&&db.account&&(db.account.name||db.account.username))||'').toString().trim();
+    const first=nm?nm.split(/\s+/)[0]:'';
+    o.innerHTML=`<div class="tour-tip tour-welcome" style="${tip}">
+      <button class="tour-x" data-tour="skip" aria-label="Fechar">✕</button>
+      <div class="tw-badge"><svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6z"/></svg> ACESSO PREMIUM LIBERADO</div>
+      <div class="tw-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></div>
+      <h3>${first?('Bem-vindo, '+esc(first)+'! 👋'):'Bem-vindo ao Tigudash! 👋'}</h3>
+      <p>${first?('<b>'+esc(first)+'</b>, você'):'Você'} ganhou <b>7 dias grátis</b> pra explorar o Tigudash sem limites. Bora começar?</p>
+      <div class="tw-days"><span class="n">7</span><span class="l">dias grátis<br>liberados ✨</span></div>
+      <div class="tour-actions">
+        <button class="tour-skip" data-tour="skip">Pular guia</button>
+        <button class="btn small" data-tour="next">Começar →</button>
+      </div></div>`;
+    return;
+  }
   const last=tourIdx===tourSet.length-1;
   o.innerHTML=`${spot}<div class="tour-tip" style="${tip}">
     <button class="tour-x" data-tour="skip" aria-label="Fechar guia">✕</button>
@@ -4335,11 +4366,10 @@ function renderAuthGate(mode,msg){
     <p class="auth-sub">${signup?'Crie seu acesso e ganhe <b>7 dias grátis</b>.':'Acesse seu painel financeiro.'}</p>
     ${msg?`<div class="auth-msg">${esc(msg)}</div>`:''}
     ${signup?`<div class="field"><label>Nome</label><input id="auth-name" autocomplete="name" placeholder="Seu nome"></div>`:''}
-    ${signup?`<div class="field"><label>Nome de usuário</label><input id="auth-username" autocomplete="off" placeholder="ex: joaosilva" style="text-transform:lowercase"><span class="field-hint">vira seu link de indicação: <b>?ref=usuario</b></span></div>`:''}
+    ${signup?`<div class="field"><label>Nome de usuário</label><input id="auth-username" autocomplete="off" placeholder="ex: joaosilva" style="text-transform:lowercase"></div>`:''}
     <div class="field"><label>E-mail</label><input id="auth-email" type="email" autocomplete="email" placeholder="voce@email.com"></div>
     <div class="field"><label>Senha</label>${pw('auth-pass','mínimo 6 caracteres',signup?'new-password':'current-password')}</div>
     ${signup?`<div class="field"><label>Repetir senha</label>${pw('auth-pass2','digite a senha de novo','new-password')}</div>`:''}
-    ${signup?`<div class="field"><label>Código de indicação <span class="lbl-opt">(opcional)</span></label><input id="auth-ref" autocomplete="off" placeholder="quem te indicou" value="${esc(pendingRef||'')}" style="text-transform:lowercase"></div>`:''}
     <button class="btn" id="auth-go" style="width:100%;justify-content:center;margin-top:4px">${signup?'Criar conta':'Entrar'}</button>
     <div class="auth-switch">${signup?'Já tem conta?':'Ainda não tem conta?'} <a href="#" id="auth-toggle">${signup?'Entrar':'Criar agora'}</a></div>
   </div>`;

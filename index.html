@@ -92,7 +92,14 @@
   /* kpi */
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:14px}
   .kpi{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden}
-  .kpi .k-lbl{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px}
+  .kpi .k-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;margin-bottom:12px}
+  .kpi .k-ic svg{width:18px;height:18px}
+  .kpi .k-ic.lime{background:rgba(188,232,74,.14);color:var(--accent)}
+  .kpi .k-ic.green{background:rgba(107,212,154,.14);color:var(--green)}
+  .kpi .k-ic.red{background:rgba(240,121,95,.14);color:var(--red)}
+  .kpi .k-ic.blue{background:rgba(74,163,232,.14);color:#4aa3e8}
+  .kpi .k-ic.violet{background:rgba(138,123,255,.15);color:#a99bff}
+  .kpi .k-lbl{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
   .kpi .k-val{font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:700;letter-spacing:-1px}
   .kpi .k-sub{font-size:12px;color:var(--faint);margin-top:5px}
   .kpi.accent{background:linear-gradient(160deg,rgba(188,232,74,.10),var(--surface) 65%);border-color:rgba(188,232,74,.28)}
@@ -125,17 +132,26 @@
 
   /* Barra de progresso da meta diária */
   .hero-goal{margin-top:16px;max-width:540px}
-  .hg-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .hg-lbl{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
-  .hg-edit{background:none;border:none;color:var(--faint);cursor:pointer;font-size:13px;padding:0 4px;transition:.15s}
+  .hg-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .hg-lbl{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+  .hg-ic{width:14px;height:14px;color:var(--accent);flex:none}
+  .hg-edit{background:none;border:none;color:var(--faint);cursor:pointer;padding:2px 4px;transition:.15s;display:flex}
+  .hg-edit svg{width:15px;height:15px}
   .hg-edit:hover{color:var(--accent)}
-  .hg-bar{position:relative;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border2)}
-  .hg-fill{height:100%;background:linear-gradient(90deg, var(--accent-dim), var(--accent));border-radius:4px;width:0%;transition:width .4s ease}
+  .hg-prog{display:flex;align-items:center;gap:11px;margin-bottom:9px}
+  .hg-bar{flex:1;position:relative;height:10px;background:var(--bg);border-radius:6px;overflow:hidden;border:1px solid var(--border2)}
+  .hg-fill{height:100%;background:linear-gradient(90deg, var(--accent-dim), var(--accent));border-radius:6px;width:0%;transition:width .5s cubic-bezier(.4,0,.2,1)}
   .hg-fill.over{background:linear-gradient(90deg, var(--green), #4ec283)}
-  .hg-fill.under{background:linear-gradient(90deg, var(--red), #d96952)}
-  .hg-marker{position:absolute;top:-3px;width:2px;height:14px;background:var(--muted);opacity:.65;display:none}
+  .hg-fill.under{background:linear-gradient(90deg, #d9a441, var(--accent-dim))}
+  .hg-pct{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:var(--accent);min-width:44px;text-align:right;letter-spacing:-.5px}
+  .hg-pct.over{color:var(--green)} .hg-pct.under{color:#e5b44c}
+  .hg-marker{position:absolute;top:-3px;width:2px;height:16px;background:var(--muted);opacity:.6;display:none}
   .hg-marker::after{content:'BE';position:absolute;top:-13px;left:-7px;font-size:8.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-weight:700}
-  .hg-sub{font-size:11.5px;color:var(--faint);margin-top:6px;font-family:'JetBrains Mono',monospace}
+  .hg-foot{display:flex;justify-content:space-between;align-items:baseline;gap:4px 12px;flex-wrap:wrap}
+  .hg-now{font-size:12.5px;color:var(--faint);font-family:'Inter',sans-serif;white-space:nowrap}
+  .hg-now b{color:var(--text);font-family:'JetBrains Mono',monospace;font-weight:700;font-size:13.5px}
+  .hg-goal{color:var(--faint)}
+  .hg-sub{font-size:11.5px;color:var(--faint);text-align:right;white-space:nowrap}
   .hero-right{display:flex;gap:18px;flex-wrap:wrap;justify-content:flex-end}
   .hero-metric{min-width:140px;text-align:right}
   .hero-m-lbl{font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:4px}
@@ -947,11 +963,17 @@
           <p class="hero-sub" id="heroSub">Quanto entrou, quanto saiu, quanto sobrou no dia de hoje.</p>
           <div class="hero-goal" id="heroGoal">
             <div class="hg-head">
-              <span class="hg-lbl">Meta diária de faturamento</span>
+              <span class="hg-lbl"><svg class="hg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Meta diária</span>
               <button class="hg-edit" id="hgEdit" title="Definir meta diária"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2"/><circle cx="12" cy="12" r="3"/></svg></button>
             </div>
-            <div class="hg-bar"><div class="hg-fill" id="hgFill"></div><div class="hg-marker" id="hgMarker" title="Break-even"></div></div>
-            <div class="hg-sub" id="hgSub">Configure sua meta para acompanhar o progresso do dia</div>
+            <div class="hg-prog">
+              <div class="hg-bar"><div class="hg-fill" id="hgFill"></div><div class="hg-marker" id="hgMarker" title="Break-even"></div></div>
+              <span class="hg-pct" id="hgPct">—</span>
+            </div>
+            <div class="hg-foot">
+              <span class="hg-now"><b id="hgNow">R$ 0</b> <span id="hgGoal" class="hg-goal">de —</span></span>
+              <span class="hg-sub" id="hgSub">defina sua meta</span>
+            </div>
           </div>
         </div>
         <div class="hero-right">
@@ -990,11 +1012,26 @@
       </div>
 
       <div class="kpis">
-        <div class="kpi accent"><div class="k-lbl">Faturamento</div><div class="k-val" id="kpiIn">R$ 0</div><div class="k-sub" id="kpiInSub">0 vendas no período</div></div>
-        <div class="kpi"><div class="k-lbl">Investido em ADS</div><div class="k-val neg" id="kpiAds">R$ 0</div><div class="k-sub" id="kpiAdsSub">tráfego pago</div></div>
-        <div class="kpi"><div class="k-lbl">ROAS</div><div class="k-val" id="kpiRoas">—</div><div class="k-sub" id="kpiRoasSub">retorno sobre ADS</div></div>
-        <div class="kpi"><div class="k-lbl">CPA</div><div class="k-val" id="kpiCpa">—</div><div class="k-sub">custo por venda</div></div>
-        <div class="kpi"><div class="k-lbl">Lucro líquido</div><div class="k-val" id="kpiProfit">R$ 0</div><div class="k-sub" id="kpiMargin">já c/ imposto 14%</div></div>
+        <div class="kpi accent">
+          <div class="k-ic lime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"/><path d="M3 5v14a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"/></svg></div>
+          <div class="k-lbl">Faturamento</div><div class="k-val" id="kpiIn">R$ 0</div><div class="k-sub" id="kpiInSub">0 vendas no período</div>
+        </div>
+        <div class="kpi">
+          <div class="k-ic red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></div>
+          <div class="k-lbl">Investido em ADS</div><div class="k-val neg" id="kpiAds">R$ 0</div><div class="k-sub" id="kpiAdsSub">tráfego pago</div>
+        </div>
+        <div class="kpi">
+          <div class="k-ic blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div>
+          <div class="k-lbl">ROAS</div><div class="k-val" id="kpiRoas">—</div><div class="k-sub" id="kpiRoasSub">retorno sobre ADS</div>
+        </div>
+        <div class="kpi">
+          <div class="k-ic violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg></div>
+          <div class="k-lbl">CPA</div><div class="k-val" id="kpiCpa">—</div><div class="k-sub">custo por venda</div>
+        </div>
+        <div class="kpi">
+          <div class="k-ic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 5c-1.5 0-2.8 1.4-3 2-2.4-1-8.5-.7-10.5 2.5C4 11 4 13 5 14.5V18a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1h4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2.2c.7-.5 1.3-1.1 1.6-1.8H21a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-1c-.3-.6-.6-1-1-1.5V5z"/><path d="M16 10h.01"/><path d="M2 9.5C2 8 3 8 3.5 8"/></svg></div>
+          <div class="k-lbl">Lucro líquido</div><div class="k-val" id="kpiProfit">R$ 0</div><div class="k-sub" id="kpiMargin">já c/ imposto 14%</div>
+        </div>
       </div>
 
       <div class="grid2">
@@ -1830,27 +1867,29 @@ function render(){
 
   // ---- Meta diária de faturamento ----
   const meta=+ui.metaDiaria||0;
-  const goalEl=$('#heroGoal');
+  const setHg=(sel,v)=>{const el=$(sel);if(el)el.textContent=v;};
   if(meta>0){
     const pct=Math.min(100, Math.round((todayFat/meta)*100));
+    const cls=todayFat>=meta?'over':todayFat>=meta*0.5?'':'under';
     const fill=$('#hgFill');
-    fill.style.width=pct+'%';
-    fill.className='hg-fill '+(todayFat>=meta?'over':todayFat>=meta*0.5?'':'under');
-    // marker de break-even
+    fill.style.width=pct+'%'; fill.className='hg-fill '+cls;
+    const pe=$('#hgPct'); if(pe){ pe.textContent=pct+'%'; pe.className='hg-pct '+cls; }
+    setHg('#hgNow', brlShort(todayFat));
+    const ge=$('#hgGoal'); if(ge) ge.textContent='de '+brlShort(meta);
     const marker=$('#hgMarker');
     if(breakEvenAlvo>0 && breakEvenAlvo<=meta*1.5){
       const mpct=Math.min(100,(breakEvenAlvo/meta)*100);
-      marker.style.left=mpct+'%';
-      marker.style.display='block';
+      marker.style.left=mpct+'%'; marker.style.display='block';
     } else marker.style.display='none';
     const falta=Math.max(0, meta-todayFat);
-    $('#hgSub').textContent = todayFat>=meta
-      ? 'Meta batida! +'+brl(todayFat-meta)+' acima · '+pct+'% da meta'
-      : 'Faltam '+brl(falta)+' · '+pct+'% de '+brl(meta);
+    setHg('#hgSub', todayFat>=meta ? '🎉 Meta batida! +'+brlShort(todayFat-meta) : 'Faltam '+brlShort(falta));
   } else {
     $('#hgFill').style.width='0%';
     $('#hgMarker').style.display='none';
-    $('#hgSub').innerHTML='<a href="javascript:void(0)" onclick="setMetaDiaria()" style="color:var(--accent);text-decoration:none">Clique para definir sua meta diária</a>';
+    const pe=$('#hgPct'); if(pe){ pe.textContent='—'; pe.className='hg-pct'; }
+    setHg('#hgNow', brlShort(todayFat));
+    const ge=$('#hgGoal'); if(ge) ge.textContent='sem meta';
+    $('#hgSub').innerHTML='<a href="javascript:void(0)" onclick="setMetaDiaria()" style="color:var(--accent);text-decoration:none;font-weight:600">definir meta</a>';
   }
 
   // ---- KPIs do período ----

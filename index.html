@@ -889,6 +889,9 @@
   .pw-ic{width:54px;height:54px;margin:2px auto 14px;display:grid;place-items:center;border-radius:16px;background:rgba(188,232,74,.1);border:1px solid rgba(188,232,74,.25);color:var(--accent)}
   .pw-ic svg{width:26px;height:26px}
   .btn.mini{padding:5px 11px;font-size:12px;border-radius:8px}
+  .sub-cta{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;margin-bottom:8px;border-radius:11px;background:var(--accent);color:#0c1206;font-family:inherit;font-weight:700;font-size:13px;border:none;cursor:pointer;text-decoration:none;transition:.15s;box-shadow:0 10px 24px -12px var(--glow)}
+  .sub-cta:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .sub-cta svg{width:15px;height:15px}
   .sub-badge{display:flex;align-items:center;gap:7px;width:100%;padding:8px 11px;margin-bottom:8px;border-radius:11px;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--surface)}
   .sub-badge .sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--muted)}
   .sub-badge .sb-txt{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -4349,6 +4352,17 @@ function renderTrialBadge(){
   const link=(subState.plan!=='active'&&SUB_CHECKOUT_URL)?` <a href="${esc(SUB_CHECKOUT_URL)}" target="_blank" rel="noopener" class="sb-link">assinar</a>`:'';
   b.className='sub-badge '+cls;
   b.innerHTML=`<span class="sb-dot"></span><span class="sb-txt">${esc(txt)}</span>${link}`;
+  /* botão "Assinar agora" — só durante o teste grátis, acima do Sair */
+  let cta=$('#subCta');
+  if(subState.plan==='trial'){
+    if(!cta){
+      cta=document.createElement(SUB_CHECKOUT_URL?'a':'button'); cta.id='subCta'; cta.className='sub-cta';
+      const acct=$('#acctBox'); if(acct) foot.insertBefore(cta, acct); else foot.appendChild(cta);
+    }
+    if(SUB_CHECKOUT_URL){ cta.href=SUB_CHECKOUT_URL; cta.target='_blank'; cta.rel='noopener'; }
+    else { cta.onclick=()=>toast('Configure o link de pagamento (SUB_CHECKOUT_URL no topo do código).'); }
+    cta.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6z"/></svg> Assinar agora`;
+  } else if(cta){ cta.remove(); }
 }
 
 /* ----- tela de login / cadastro ----- */

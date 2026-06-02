@@ -953,6 +953,10 @@
   .am-no{flex:1;min-width:130px;justify-content:center;color:var(--red)!important;border-color:rgba(240,121,95,.35)!important}
   .am-no:hover{border-color:var(--red)!important;background:rgba(240,121,95,.08)}
   .role-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.02em;padding:2px 7px;border-radius:6px;margin-left:5px;vertical-align:middle;background:rgba(138,123,255,.16);color:#a99bff}
+  .seg-toggle{display:flex;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:3px}
+  .seg-toggle button{flex:1;background:none;border:none;color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;padding:9px 6px;border-radius:7px;cursor:pointer;transition:.15s;white-space:nowrap}
+  .seg-toggle button:hover:not(.on){color:var(--text)}
+  .seg-toggle button.on{background:var(--accent);color:#0c1206;box-shadow:0 1px 2px rgba(0,0,0,.25)}
   .admin-group-h{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;margin:22px 0 10px}
   .admin-group-h .gc{font-size:11px;color:var(--faint);font-weight:500}
 </style>
@@ -2611,19 +2615,28 @@ function renderVault(){
   renderCompany();
 }
 /* ---- Dados da empresa + contas bancárias ---- */
-const COMPANY_FIELDS=[
+const COMPANY_PJ=[
   {k:'cnpj',label:'CNPJ'},{k:'nome',label:'Razão social / Nome'},{k:'cnae',label:'CNAE'},
   {k:'natureza',label:'Natureza jurídica'},{k:'ie',label:'Inscrição estadual'},{k:'regime',label:'Regime tributário'}
 ];
+const COMPANY_PF=[
+  {k:'cpf',label:'CPF'},{k:'nome',label:'Nome completo'}
+];
+function companyFields(t){ return t==='cpf'?COMPANY_PF:COMPANY_PJ; }
+const COMPANY_FIELDS=COMPANY_PJ;
 const BANK_COLORS=['#8a05be','#000000','#e0245e','#2d4ef5','#00a868','#ff7a00','#5b54e6'];
 function renderCompany(){
   const box=$('#companyBody'); if(!box) return;
   const c=vaultData.company||{};
-  const hasCompany=COMPANY_FIELDS.some(f=>c[f.k]);
-  const rows=COMPANY_FIELDS.filter(f=>c[f.k]).map(f=>`<div class="cc-row"><span class="cc-lbl">${esc(f.label)}</span><span class="cc-val">${esc(c[f.k])}</span></div>`).join('');
+  const type=c.type==='cpf'?'cpf':'cnpj';
+  const fields=companyFields(type);
+  const hasCompany=fields.some(f=>c[f.k]);
+  const rows=fields.filter(f=>c[f.k]).map(f=>`<div class="cc-row"><span class="cc-lbl">${esc(f.label)}</span><span class="cc-val">${esc(c[f.k])}</span></div>`).join('');
+  const ttl=type==='cpf'?'Seus dados (CPF)':'Dados da empresa';
+  const blank=type==='cpf'?'Cadastre seu CPF e nome.':'Cadastre o CNPJ, CNAE e a natureza jurídica da sua empresa.';
   const companyCard=`<div class="company-card">
-    <div class="cc-head"><h3>Dados da empresa</h3><button class="btn ghost" id="editCompany">${hasCompany?'Editar':'Preencher'}</button></div>
-    ${hasCompany?`<div class="cc-grid">${rows}</div>`:'<div class="cc-blank">Cadastre o CNPJ, CNAE e a natureza jurídica da sua empresa.</div>'}
+    <div class="cc-head"><h3>${ttl}${hasCompany?` <span class="role-tag" style="background:rgba(74,163,232,.15);color:#4aa3e8">${type.toUpperCase()}</span>`:''}</h3><button class="btn ghost" id="editCompany">${hasCompany?'Editar':'Preencher'}</button></div>
+    ${hasCompany?`<div class="cc-grid">${rows}</div>`:`<div class="cc-blank">${blank}</div>`}
   </div>`;
   const banks=vaultData.banks||[];
   const bankCards=banks.map(b=>{
@@ -2643,16 +2656,30 @@ function renderCompany(){
   const ec=$('#editCompany'); if(ec) ec.onclick=companyEditModal;
 }
 function companyEditModal(){
-  const c=vaultData.company||{};
-  modal.innerHTML=`<h3>Dados da empresa</h3>
-    <p style="color:var(--muted);font-size:13px;margin:-6px 0 14px">Esses dados ficam salvos neste dispositivo e entram no backup ao exportar.</p>
-    ${COMPANY_FIELDS.map(f=>`<div class="field"><label>${esc(f.label)}</label><input id="co-${f.k}" value="${esc(c[f.k]||'')}" placeholder="${esc(f.label)}" autocomplete="off"></div>`).join('')}
-    <div class="modal-actions"><button class="btn ghost" onclick="closeModal()" style="flex:1;justify-content:center">Cancelar</button><button class="btn" id="co-save" style="flex:1;justify-content:center">Salvar</button></div>`;
-  openModal();
-  $('#co-save').onclick=()=>{
-    const obj={}; COMPANY_FIELDS.forEach(f=>{ obj[f.k]=($('#co-'+f.k).value||'').trim(); });
-    vaultData.company=obj; save(); renderVault(); closeModal(); toast('Dados da empresa salvos ✓');
-  };
+  const c=Object.assign({}, vaultData.company||{});
+  let type=c.type==='cpf'?'cpf':'cnpj';
+  function build(){
+    const fields=companyFields(type);
+    modal.innerHTML=`<h3>${type==='cpf'?'Seus dados (Pessoa Física)':'Dados da empresa'}</h3>
+      <p style="color:var(--muted);font-size:13px;margin:-6px 0 14px">Esses dados ficam salvos e entram no backup ao exportar.</p>
+      <div class="field"><label>Tipo de cadastro</label>
+        <div class="seg-toggle" id="co-type">
+          <button type="button" data-t="cnpj" class="${type==='cnpj'?'on':''}">CNPJ · Empresa</button>
+          <button type="button" data-t="cpf" class="${type==='cpf'?'on':''}">CPF · Pessoa física</button>
+        </div>
+      </div>
+      ${fields.map(f=>`<div class="field"><label>${esc(f.label)}</label><input id="co-${f.k}" value="${esc(c[f.k]||'')}" placeholder="${esc(f.label)}" autocomplete="off"></div>`).join('')}
+      <div class="modal-actions"><button class="btn ghost" onclick="closeModal()" style="flex:1;justify-content:center">Cancelar</button><button class="btn" id="co-save" style="flex:1;justify-content:center">Salvar</button></div>`;
+    $('#co-type').addEventListener('click',e=>{ const b=e.target.closest('[data-t]'); if(!b||b.dataset.t===type)return;
+      companyFields(type).forEach(f=>{ const el=$('#co-'+f.k); if(el) c[f.k]=el.value; }); /* preserva o digitado */
+      type=b.dataset.t; build();
+    });
+    $('#co-save').onclick=()=>{
+      const obj={type}; companyFields(type).forEach(f=>{ obj[f.k]=($('#co-'+f.k).value||'').trim(); });
+      vaultData.company=obj; save(); renderVault(); closeModal(); toast('Dados salvos ✓');
+    };
+  }
+  build(); openModal();
 }
 function bankModal(editId){
   const banks=vaultData.banks||[];

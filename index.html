@@ -802,7 +802,7 @@
   .tour-skip:hover{color:var(--text)}
   .tour-help{position:fixed;right:18px;bottom:18px;z-index:80;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--accent);font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;cursor:pointer;box-shadow:0 14px 34px -16px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.05);transition:.15s}
   .tour-help:hover{border-color:var(--accent-dim);transform:translateY(-2px);color:var(--accent)}
-  @media(max-width:480px){.tour-help{right:14px;bottom:14px;width:38px;height:38px}}
+  @media(max-width:480px){.tour-help{right:14px;bottom:calc(74px + env(safe-area-inset-bottom,0px));width:38px;height:38px}}
   /* ===== Indique e Ganhe (afiliados) ===== */
   .ref-hero{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:20px;padding:30px 32px;margin-bottom:18px;
     background:radial-gradient(120% 150% at 0% 0%,rgba(188,232,74,.16),transparent 52%),linear-gradient(135deg,rgba(20,26,14,.55),var(--surface));box-shadow:var(--shadow)}
@@ -4091,18 +4091,29 @@ const TOUR_STEPS=[
   {sel:'#nav button[data-v="cofre"]',title:'Cofre',text:'Guarde logins, chips/WhatsApp e chaves PIX de contingência — tudo seguro neste aparelho.'},
   {sel:null,title:'Tudo pronto! 🚀',text:'Explore à vontade. Pra rever este guia, clique no “?” no canto da tela.'}
 ];
-let tourIdx=0;
-function maybeStartTour(){ try{ if(!localStorage.getItem(TOUR_KEY)) setTimeout(startTour,650); }catch(e){} }
-function startTour(){ tourIdx=0; renderTourStep(); }
+/* versão do tour pro mobile: aponta pra barra inferior (o menu lateral fica escondido no drawer) */
+const TOUR_STEPS_MOBILE=[
+  {sel:null,title:'Bem-vindo ao Tigudash 👋',text:'Em 20 segundos te mostro como navegar. Pode pular quando quiser.'},
+  {sel:'.mtab-btn[data-v="dash"]',title:'Resumo',text:'Sua visão geral: lucro, vendas, gasto em ADS e a meta do dia.'},
+  {sel:'.mtab-btn[data-v="calendario"]',title:'Diário',text:'Seu dia a dia por data — Lucro, ROAS, ROI e imposto calculados sozinhos.'},
+  {sel:'.mtab-btn[data-v="vendas"]',title:'Vendas',text:'Tudo que entra, com filtros por produto e por período.'},
+  {sel:'.mtab-btn[data-v="despesas"]',title:'Despesas',text:'Tudo que sai: anúncios, ferramentas e taxas — pontual ou recorrente.'},
+  {sel:'#mtabMore',title:'Menu "Mais"',text:'Toque aqui pra abrir o menu completo: Produtos, Meta Ads, Cofre, Indique e Ganhe e mais.'},
+  {sel:null,title:'Tudo pronto! 🚀',text:'Explore à vontade. Pra rever este guia, toque no "?" no canto da tela.'}
+];
+let tourIdx=0, tourSet=TOUR_STEPS;
+/* mostra SÓ na primeira vez — já marca como visto ao iniciar (não repete nem se não terminar) */
+function maybeStartTour(){ try{ if(!localStorage.getItem(TOUR_KEY)){ localStorage.setItem(TOUR_KEY,'1'); setTimeout(startTour,700); } }catch(e){} }
+function startTour(){ tourIdx=0; tourSet=(window.innerWidth<=860)?TOUR_STEPS_MOBILE:TOUR_STEPS; renderTourStep(); }
 function endTour(){ try{ localStorage.setItem(TOUR_KEY,'1'); }catch(e){} const o=$('#tourOverlay'); if(o) o.remove(); }
 function renderTourStep(){
-  const step=TOUR_STEPS[tourIdx]; if(!step){ endTour(); return; }
+  const step=tourSet[tourIdx]; if(!step){ endTour(); return; }
   let o=$('#tourOverlay');
   if(!o){ o=document.createElement('div'); o.id='tourOverlay'; o.className='tour-overlay'; document.body.appendChild(o);
     o.addEventListener('click',e=>{ const b=e.target.closest('[data-tour]'); if(!b)return; const a=b.dataset.tour;
       if(a==='skip') endTour();
       else if(a==='prev'){ tourIdx=Math.max(0,tourIdx-1); renderTourStep(); }
-      else { if(tourIdx>=TOUR_STEPS.length-1) endTour(); else { tourIdx++; renderTourStep(); } }
+      else { if(tourIdx>=tourSet.length-1) endTour(); else { tourIdx++; renderTourStep(); } }
     });
   }
   const target=step.sel?$(step.sel):null;
@@ -4116,9 +4127,9 @@ function renderTourStep(){
     if(ty+210>window.innerHeight) ty=Math.max(10,window.innerHeight-220);
     tip=`left:${Math.min(tx,window.innerWidth-tipW-10)}px;top:${ty}px`;
   } else { tip='left:50%;top:50%;transform:translate(-50%,-50%)'; }
-  const last=tourIdx===TOUR_STEPS.length-1;
+  const last=tourIdx===tourSet.length-1;
   o.innerHTML=`${spot}<div class="tour-tip" style="${tip}">
-    <div class="tour-step">${tourIdx+1} / ${TOUR_STEPS.length}</div>
+    <div class="tour-step">${tourIdx+1} / ${tourSet.length}</div>
     <h4>${esc(step.title)}</h4><p>${esc(step.text)}</p>
     <div class="tour-actions">
       <button class="tour-skip" data-tour="skip">Pular guia</button>

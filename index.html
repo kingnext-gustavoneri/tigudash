@@ -74,6 +74,9 @@
     border-radius:9px;padding:9px;cursor:pointer;font-family:inherit;transition:.15s}
   .side-foot button:hover{color:var(--text);border-color:var(--accent-dim)}
 
+  /* tab bar inferior + backdrop do drawer — só aparecem no mobile (display:none aqui) */
+  .mtabbar{display:none}
+  .aside-backdrop{display:none}
   /* main */
   main{padding:30px 38px 60px;max-width:1600px;margin:0 auto;width:100%}
   .topbar{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
@@ -603,24 +606,42 @@
   @media(max-width:860px){ .ml-table-wrap{max-height:none} }
 
   @media(max-width:860px){
-    .app{grid-template-columns:minmax(0,1fr)}
-    aside{position:static;height:auto;flex-direction:column;gap:10px;padding:14px 14px 12px;border-right:none;border-bottom:1px solid var(--border);min-width:0}
-    .brand{margin-bottom:0;align-items:flex-start} .brand::before{font-size:22px} .brand::after{margin-top:-2px}
-    /* menu vira uma faixa rolável horizontal (sem quebrar em várias linhas) */
-    nav{display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-    nav::-webkit-scrollbar{display:none}
-    nav button{width:auto;flex:none;white-space:nowrap;padding:9px 14px;border-radius:10px;font-size:13px}
-    nav button.on::before{display:none} nav button.on span.ico{margin-left:0}
-    .nav-section{display:none}
-    .side-foot{flex-direction:row;flex-wrap:wrap;margin:0;gap:6px;padding-top:0}
-    .acct-box{width:100%;order:-1}
-    .side-foot>button{flex:1 1 auto;min-width:96px;font-size:11.5px;padding:9px 8px}
-    main{padding:18px 16px 64px;max-width:100%;margin:0;min-width:0;overflow-x:hidden}
-    .topbar{align-items:flex-start} .topbar h2{font-size:24px}
+    .app{display:block}
+    /* SIDEBAR vira um drawer que desliza da esquerda (estilo app) */
+    aside{position:fixed;top:0;left:0;bottom:0;width:82%;max-width:310px;height:100%;z-index:130;
+      padding:22px 16px;border-right:1px solid var(--border);border-bottom:none;gap:5px;min-width:0;
+      flex-direction:column;background:var(--surface);box-shadow:18px 0 60px -22px rgba(0,0,0,.85);
+      transform:translateX(-104%);transition:transform .26s cubic-bezier(.4,0,.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch}
+    body.drawer-open aside{transform:none}
+    aside .brand{margin-bottom:16px} .brand::before{font-size:23px}
+    #nav{display:flex;flex-direction:column;gap:3px;overflow:visible}
+    #nav button{width:100%;font-size:14.5px;padding:12px 13px;border-radius:11px}
+    #nav button.on::before{margin-left:-13px}
+    .nav-section{display:block}
+    .side-foot{margin-top:16px;flex-direction:column;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
+    .acct-box{width:100%}
+    /* fundo escuro atrás do drawer */
+    .aside-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:120;opacity:0;pointer-events:none;transition:opacity .26s}
+    body.drawer-open .aside-backdrop{opacity:1;pointer-events:auto}
+    /* MAIN ocupa a tela toda + espaço reservado pra tab bar de baixo */
+    main{padding:16px 15px calc(78px + env(safe-area-inset-bottom,0px));max-width:100%;margin:0;min-width:0;overflow-x:hidden}
+    .topbar{align-items:flex-start;margin-bottom:18px} .topbar h2{font-size:23px}
     .grid2{grid-template-columns:1fr}
     /* qualquer tabela/área larga rola sozinha em vez de esticar a página */
     .ml-table-wrap,.card>table,.view .card>table,.vtabs{max-width:100%;overflow-x:auto}
     .card{overflow-x:auto}
+    /* ===== TAB BAR INFERIOR FIXA (navegação principal, estilo app) ===== */
+    .mtabbar{display:flex;flex-direction:row;position:fixed;left:0;right:0;bottom:0;z-index:110;
+      background:rgba(13,15,20,.93);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      border-top:1px solid var(--border);justify-content:space-around;align-items:stretch;
+      padding:7px 4px calc(7px + env(safe-area-inset-bottom,0px))}
+    .mtab-btn{flex:1 1 0;min-width:0;background:none;border:none;color:var(--faint);font:inherit;cursor:pointer;
+      display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;border-radius:12px;transition:color .15s,transform .1s}
+    .mtab-btn svg{width:23px;height:23px}
+    .mtab-btn span{font-size:10px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;line-height:1}
+    .mtab-btn.on{color:var(--accent)}
+    .mtab-btn:active{transform:scale(.9)}
+    .tour-help{bottom:calc(76px + env(safe-area-inset-bottom,0px));right:14px}
   }
   /* monitores grandes / ultra-wide — usa melhor o espaço */
   @media(min-width:1700px){
@@ -629,7 +650,7 @@
   }
   /* celulares pequenos */
   @media(max-width:480px){
-    main{padding:14px 12px 64px}
+    main{padding:14px 12px calc(78px + env(safe-area-inset-bottom,0px))}
     .topbar{gap:12px} .topbar h2{font-size:21px} .topbar p{font-size:12.5px}
     .kpis{grid-template-columns:repeat(2,1fr);gap:10px}
     .kpi{padding:14px 14px 12px} .kpi .k-val{font-size:21px}
@@ -1483,6 +1504,15 @@
       <div id="refBody"></div>
     </section>
   </main>
+  <!-- Tab bar inferior + drawer (somente mobile, estilo app) -->
+  <div class="aside-backdrop" id="asideBackdrop"></div>
+  <nav class="mtabbar" id="mtabbar" aria-label="Navegação rápida">
+    <button class="mtab-btn" data-v="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg><span>Resumo</span></button>
+    <button class="mtab-btn" data-v="calendario"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Diário</span></button>
+    <button class="mtab-btn" data-v="vendas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg><span>Vendas</span></button>
+    <button class="mtab-btn" data-v="despesas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/></svg><span>Despesas</span></button>
+    <button class="mtab-btn" id="mtabMore"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg><span>Mais</span></button>
+  </nav>
 </div>
 
 <!-- MODAL -->
@@ -3427,7 +3457,10 @@ function metaAppIdModal(){
 /* ---- events ---- */
 function switchView(v){
   $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
-  if(window.innerWidth<=860){ const ob=$('#nav button.on'); if(ob&&ob.scrollIntoView) try{ob.scrollIntoView({inline:'center',block:'nearest'});}catch(e){} }
+  /* sincroniza a tab bar inferior (mobile) */
+  const PRIMARY=['dash','calendario','vendas','despesas'];
+  $$('.mtab-btn[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  const moreBtn=$('#mtabMore'); if(moreBtn) moreBtn.classList.toggle('on', !PRIMARY.includes(v));
   $$('.view').forEach(s=>s.classList.remove('on')); $('#v-'+v).classList.add('on');
   const titles={dash:['Resumo','Visão geral do mês — quanto entrou, quanto saiu, quanto sobrou.'],
     vendas:['Vendas','Todas as vendas registradas, com filtros por produto e período.'],
@@ -3453,9 +3486,23 @@ function switchView(v){
 }
 $('#nav').addEventListener('click',e=>{
   const btn=e.target.closest('button'); if(!btn)return;
+  closeDrawer();
   if(btn.dataset.v==='afiliados'){ try{ window.open('afiliados.html','_blank','noopener'); }catch(err){ location.href='afiliados.html'; } return; }
   switchView(btn.dataset.v);
 });
+/* ----- tab bar inferior + drawer (mobile) ----- */
+function openDrawer(){ document.body.classList.add('drawer-open'); }
+function closeDrawer(){ document.body.classList.remove('drawer-open'); }
+(function(){
+  const bar=$('#mtabbar');
+  if(bar) bar.addEventListener('click',e=>{
+    const b=e.target.closest('.mtab-btn'); if(!b) return;
+    if(b.id==='mtabMore'){ document.body.classList.toggle('drawer-open'); return; }
+    if(b.dataset.v){ closeDrawer(); switchView(b.dataset.v); }
+  });
+  const bd=$('#asideBackdrop'); if(bd) bd.addEventListener('click',closeDrawer);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
+})();
 
 /* filtro de período — compartilhado entre Visão geral, Vendas, Despesas e Calendário */
 function syncPeriodBars(){

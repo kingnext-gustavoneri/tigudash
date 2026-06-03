@@ -1831,8 +1831,19 @@ const ADMIN_PASS  = 'admin123';
    =================================================================== */
 const TRIAL_DAYS = 7;
 const SUB_DAYS = 30;
-const SUB_PRICE_LABEL = 'R$ 47/mês';   // ← troque pelo seu preço
-const SUB_CHECKOUT_URL = '';           // ← cole aqui seu link de pagamento
+const SUB_PRICE_LABEL = 'R$ 67,90/mês'; // ← preço da assinatura
+const SUB_CHECKOUT_URL = 'https://pay.cakto.com.br/vm88zge_911791'; // ← checkout Cakto (assinatura mensal R$ 67,90)
+/* monta o link do checkout já com e-mail/nome do usuário (ajuda a casar o pagamento com a conta) */
+function checkoutUrl(){
+  let url = SUB_CHECKOUT_URL; if(!url) return '';
+  try{
+    const email = (typeof authUser!=='undefined' && authUser && authUser.email) || (typeof db!=='undefined' && db.account && db.account.email) || '';
+    const name  = (typeof db!=='undefined' && db.account && db.account.name) || '';
+    if(email) url += (url.indexOf('?')>=0?'&':'?') + 'email=' + encodeURIComponent(email);
+    if(name)  url += (url.indexOf('?')>=0?'&':'?') + 'name='  + encodeURIComponent(name);
+  }catch(e){}
+  return url;
+}
 const REQUIRE_APPROVAL = true;         // novos cadastros precisam ser aceitos por você no Admin
 let subState = null, authAccessUntil = null, authApproved = false, authRole = 'user', authRejected = false;
 const ENABLE_LOGIN = true;
@@ -4595,7 +4606,7 @@ function renderPaywall(msg){
   let g=$('#authGate'); if(!g){ g=document.createElement('div'); g.id='authGate'; document.body.appendChild(g); }
   g.className='auth-gate show';
   const priceBtn = SUB_CHECKOUT_URL
-    ? `<a class="btn" href="${esc(SUB_CHECKOUT_URL)}" target="_blank" rel="noopener" style="width:100%;justify-content:center">Assinar agora — ${esc(SUB_PRICE_LABEL)}</a>`
+    ? `<a class="btn" href="${esc(checkoutUrl())}" target="_blank" rel="noopener" style="width:100%;justify-content:center">Assinar agora — ${esc(SUB_PRICE_LABEL)}</a>`
     : `<button class="btn" style="width:100%;justify-content:center" onclick="toast('Configure o link de pagamento (SUB_CHECKOUT_URL).')">Assinar agora — ${esc(SUB_PRICE_LABEL)}</button>`;
   g.innerHTML=`<div class="auth-card">
     <div class="auth-logo">Tigudash</div>
@@ -4629,7 +4640,7 @@ function renderTrialBadge(){
       cta=document.createElement(SUB_CHECKOUT_URL?'a':'button'); cta.id='subCta'; cta.className='sub-cta';
       const acct=$('#acctBox'); if(acct) foot.insertBefore(cta, acct); else foot.appendChild(cta);
     }
-    if(SUB_CHECKOUT_URL){ cta.href=SUB_CHECKOUT_URL; cta.target='_blank'; cta.rel='noopener'; }
+    if(SUB_CHECKOUT_URL){ cta.href=checkoutUrl(); cta.target='_blank'; cta.rel='noopener'; }
     else { cta.onclick=()=>toast('Configure o link de pagamento (SUB_CHECKOUT_URL no topo do código).'); }
     cta.innerHTML=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6z"/></svg> Assinar agora`;
   } else if(cta){ cta.remove(); }

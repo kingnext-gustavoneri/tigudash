@@ -38,7 +38,7 @@
       radial-gradient(1000px 700px at -6% 112%, rgba(31,157,87,.05), transparent 55%),
       var(--bg);
   }
-  :root[data-theme="light"] aside{ background:linear-gradient(180deg,rgba(0,0,0,.015),transparent 38%),rgba(255,255,255,.72) !important }
+  :root[data-theme="light"] aside{ background:linear-gradient(180deg,rgba(0,0,0,.015),transparent 38%),rgba(255,255,255,.96) !important }
   :root[data-theme="light"] .brand::before{ text-shadow:none }
   :root[data-theme="light"] .topbar{ background:transparent }
   :root[data-theme="tig"]{
@@ -57,9 +57,10 @@
       radial-gradient(1000px 700px at -6% 112%, rgba(121,236,132,.07), transparent 55%),
       var(--bg);
   }
-  :root[data-theme="tig"] aside{ background:linear-gradient(180deg,rgba(194,242,78,.05),transparent 38%),rgba(6,10,5,.6) !important }
+  :root[data-theme="tig"] aside{ background:linear-gradient(180deg,rgba(194,242,78,.05),transparent 38%),rgba(6,10,5,.94) !important }
   /* ===== área de Configurações ===== */
   .cfg-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .cfg-flash{ box-shadow:0 0 0 2px var(--accent), 0 10px 30px -12px var(--glow) !important; transition:box-shadow .25s ease }
   .cfg-card h3{font-family:'Space Grotesk',sans-serif;font-size:16px;margin:0 0 4px}
   .cfg-card .hint{margin-bottom:16px}
   .theme-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
@@ -551,7 +552,7 @@
   .sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:14px;flex-wrap:wrap}
 
   /* modal */
-  .overlay{position:fixed;inset:0;background:rgba(8,8,6,.7);backdrop-filter:blur(4px);display:none;
+  .overlay{position:fixed;inset:0;background:rgba(8,8,6,.7);display:none;
     align-items:center;justify-content:center;z-index:50;padding:20px}
   .overlay.show{display:flex}
   .modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:26px;width:min(440px,100%);box-shadow:var(--shadow);max-height:calc(100vh - 40px);overflow-y:auto}
@@ -732,7 +733,7 @@
     .card{overflow-x:auto}
     /* ===== TAB BAR INFERIOR FIXA (navegação principal, estilo app) ===== */
     .mtabbar{display:flex;flex-direction:row;position:fixed;left:0;right:0;bottom:0;z-index:110;
-      background:rgba(13,15,20,.93);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      background:rgba(13,15,20,.97);
       border-top:1px solid var(--border);justify-content:space-around;align-items:stretch;
       padding:7px 4px calc(7px + env(safe-area-inset-bottom,0px))}
     .mtab-btn{flex:1 1 0;min-width:0;background:none;border:none;color:var(--faint);font:inherit;cursor:pointer;
@@ -802,10 +803,10 @@
   .kpi,.card,.chip,.cred,.pixc,.meta-kpi,.conn-opt,.empty-state,.hero-today,.period-bar,.ml-table-wrap,.vtabs,.month,.wh-step,.day-kpis>div,.wh-item{
     box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 16px 40px -30px rgba(0,0,0,.8);
   }
-  /* sidebar em vidro (glass) */
-  aside{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 38%),rgba(10,11,14,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-  /* overlay e modal mais futuristas */
-  .overlay{background:radial-gradient(1200px 820px at 50% -5%,rgba(188,232,74,.05),rgba(5,6,8,.8));backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+  /* sidebar (fundo sólido — sem backdrop-filter, que deixava painéis pretos ao redimensionar a janela no Chrome) */
+  aside{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 38%),rgba(10,11,14,.92)}
+  /* overlay e modal (sem backdrop-filter; a opacidade maior compensa o blur) */
+  .overlay{background:radial-gradient(1200px 820px at 50% -5%,rgba(188,232,74,.05),rgba(5,6,8,.9))}
   .modal{box-shadow:0 44px 110px -34px rgba(0,0,0,.92),inset 0 1px 0 rgba(255,255,255,.05)}
   /* foco suave (anel de acento) nos campos */
   .field input:focus,.field select:focus,.vault-search:focus,.d-field .d-inp:focus,.ml-sel:focus,.period-custom input:focus,.month input:focus{box-shadow:0 0 0 3px rgba(188,232,74,.13)}
@@ -899,7 +900,7 @@
 
   /* ===== Guia de primeira vez (tour) ===== */
   .tour-overlay{position:fixed;inset:0;z-index:150}
-  .tour-overlay.tour-dim{background:rgba(4,5,8,.78);backdrop-filter:blur(7px) saturate(.8);-webkit-backdrop-filter:blur(7px) saturate(.8)}
+  .tour-overlay.tour-dim{background:rgba(4,5,8,.88)}
   .tour-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(6,7,10,.74);outline:2px solid var(--accent);outline-offset:0;pointer-events:none;transition:top .3s cubic-bezier(.3,.85,.3,1),left .3s cubic-bezier(.3,.85,.3,1),width .3s,height .3s}
   .tour-tip{position:fixed;width:300px;max-width:calc(100vw - 20px);background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px;box-shadow:0 30px 70px -24px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.05);z-index:151}
   .tour-x{position:absolute;top:9px;right:9px;background:none;border:none;color:var(--faint);font-size:15px;cursor:pointer;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;line-height:1;transition:.15s}
@@ -1533,10 +1534,10 @@
       <div class="kpis cal-kpis" style="margin-top:18px">
         <div class="kpi"><div class="k-lbl">Gasto / Ads</div><div class="k-val neg" id="calKpiGasto">R$ 0</div><div class="k-sub">no período</div></div>
         <div class="kpi"><div class="k-lbl">Receita</div><div class="k-val pos" id="calKpiRec">R$ 0</div><div class="k-sub" id="calKpiRecSub">0 vendas</div></div>
-        <div class="kpi accent"><div class="k-lbl">Lucro</div><div class="k-val" id="calKpiLuc">R$ 0</div><div class="k-sub">receita − gasto</div></div>
+        <div class="kpi accent"><div class="k-lbl">Lucro</div><div class="k-val" id="calKpiLuc">R$ 0</div><div class="k-sub">receita − gastos − imposto</div></div>
         <div class="kpi"><div class="k-lbl">ROAS</div><div class="k-val" id="calKpiRoas">—</div><div class="k-sub">retorno por R$1</div></div>
         <div class="kpi"><div class="k-lbl">ROI</div><div class="k-val" id="calKpiRoi">—</div><div class="k-sub">% sobre o gasto</div></div>
-        <div class="kpi"><div class="k-lbl" id="calKpiImp-lbl">Imposto 12,5%</div><div class="k-val" id="calKpiImp">R$ 0</div><div class="k-sub">sobre o gasto</div></div>
+        <div class="kpi" style="cursor:pointer" title="Imposto editável em Configurações — clique para abrir" onclick="setImpostoPct()"><div class="k-lbl" id="calKpiImp-lbl">Imposto 12,5%</div><div class="k-val" id="calKpiImp">R$ 0</div><div class="k-sub">sobre o gasto</div></div>
       </div>
     </section>
 
@@ -1744,6 +1745,11 @@
           <span class="cfg-suffix">% sobre o gasto com anúncios</span>
         </div>
       </div>
+      <div class="cfg-card">
+        <h3>Tutorial</h3>
+        <div class="hint">Reveja o guia de boas-vindas que aparece no primeiro acesso após o cadastro.</div>
+        <button class="cfg-btn" id="cfgReplayTour" type="button">Rever tutorial</button>
+      </div>
       <div class="cfg-card" id="cfgPwCard">
         <div class="cfg-head">
           <div class="cfg-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
@@ -1889,6 +1895,16 @@ function supaSave(){
     try{ supa.from('app_state').upsert({user_id:authUser.id, email:authUser.email, data:db, updated_at:new Date().toISOString()}).then(()=>{},()=>{}); }catch(e){}
   }, 900);
 }
+/* envia IMEDIATAMENTE o estado atual (ao trocar de aba / minimizar / fechar) — garante que a última alteração não se perca antes do debounce */
+function supaFlush(){
+  if(!supa || !authUser) return;
+  clearTimeout(supaSaveTimer);
+  try{ supa.from('app_state').upsert({user_id:authUser.id, email:authUser.email, data:db, updated_at:new Date().toISOString()}); }catch(e){}
+}
+try{
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') supaFlush(); });
+  window.addEventListener('pagehide', supaFlush);
+}catch(e){}
 /* estado de UI (aba ativa) — separado dos dados financeiros e do cofre */
 function loadUI(){try{return JSON.parse(localStorage.getItem(UIKEY))||{}}catch(e){return {}}}
 function saveUI(){try{localStorage.setItem(UIKEY,JSON.stringify(ui));}catch(e){}}
@@ -1896,14 +1912,15 @@ function saveUI(){try{localStorage.setItem(UIKEY,JSON.stringify(ui));}catch(e){}
 function impostoPctVal(){ const v=parseFloat(typeof ui!=='undefined'&&ui.impostoPct); return (isFinite(v)&&v>=0&&v<=100)?v:12.5; }
 function impostoRate(){ return impostoPctVal()/100; }
 function impostoPctLabel(){ return String(impostoPctVal()).replace('.',',')+'%'; }
+/* a edição do imposto vive em Configurações: leva o usuário até o campo e destaca o card */
 function setImpostoPct(){
-  const v=prompt('Imposto sobre o gasto com anúncios (%)\n\nEx.: 12.5 para 12,5%\nPadrão: 12,5%', String(impostoPctVal()).replace('.',','));
-  if(v===null) return;
-  const n=parseFloat(String(v).replace(',','.'));
-  if(isNaN(n)||n<0||n>100){ toast('Valor inválido'); return; }
-  ui.impostoPct=n; saveUI(); render();
-  const f=$('#cfgImposto'); if(f) f.value=n;
-  toast('Imposto sobre ADS: '+impostoPctLabel());
+  switchView('config');
+  const f=$('#cfgImposto');
+  if(f){
+    f.value=impostoPctVal();
+    const card=f.closest('.cfg-card'); if(card){ card.classList.add('cfg-flash'); setTimeout(()=>card.classList.remove('cfg-flash'),1500); }
+    try{ f.scrollIntoView({block:'center',behavior:'smooth'}); setTimeout(()=>{ f.focus({preventScroll:true}); if(f.select) f.select(); },120); }catch(e){}
+  }
 }
 let ui=loadUI();
 let db=load()||seed();
@@ -1945,11 +1962,18 @@ function initMeta(){
   else { db.meta={bms:db.meta.bms||[],accounts:db.meta.accounts||[],campaigns:db.meta.campaigns||[]}; }
   metaData=db.meta;
 }
-let cur=new Date(); cur.setDate(1);
+/* ===== Fuso horário do app: São Paulo (BRT) ===== */
+const APP_TZ='America/Sao_Paulo';
+/* "agora" no fuso de São Paulo: os campos locais (getDate, getHours…) passam a refletir
+   o relógio de SP em QUALQUER dispositivo/servidor — independe do fuso da máquina do usuário. */
+function spNow(){ try{ return new Date(new Date().toLocaleString('en-US',{timeZone:APP_TZ})); }catch(e){ return new Date(); } }
+/* 'YYYY-MM-DD' a partir dos campos locais de uma data (use com spNow p/ datas no fuso de SP) */
+function ymd(d){ d=d||spNow(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+let cur=spNow(); cur.setDate(1);
 
 function seed(){
-  const d=new Date(), y=d.getFullYear(), m=d.getMonth();
-  const iso=(day)=>new Date(y,m,day).toISOString().slice(0,10);
+  const d=spNow(), y=d.getFullYear(), m=d.getMonth();
+  const iso=(day)=>ymd(new Date(y,m,day));
   const bm1=id(), ac1=id();
   return {
     products:[
@@ -1988,7 +2012,7 @@ function inMonth(dstr,base){const d=new Date(dstr+'T00:00');return d.getFullYear
 
 /* ---- filtro de período (dashboard) ---- */
 function getDashRange(){
-  const today=new Date(); today.setHours(0,0,0,0);
+  const today=spNow(); today.setHours(0,0,0,0);
   const iso=d=>{const dt=new Date(d);dt.setHours(12,0,0,0);return dt.toISOString().slice(0,10);};
   const tIso=iso(today);
   switch(ui.period||'mes'){
@@ -2034,7 +2058,7 @@ function render(){
   const cpa=dashSales.length>0&&adsRange>0?(adsRange/dashSales.length):0;
 
   // ---- HERO: "Como está hoje" (sempre olha o dia de hoje, independente do filtro) ----
-  const todayStr=new Date().toISOString().slice(0,10);
+  const todayStr=today();
   const todaySales=db.sales.filter(s=>s.date===todayStr);
   const todayAds=db.expenses.filter(e=>e.date===todayStr && e.cat==='Tráfego / Anúncios').reduce((a,e)=>a+e.value,0);
   const todayOther=db.expenses.filter(e=>e.date===todayStr && e.cat!=='Tráfego / Anúncios').reduce((a,e)=>a+e.value,0);
@@ -2097,7 +2121,7 @@ function render(){
       marker.style.left=mpct+'%'; marker.style.display='block';
     } else marker.style.display='none';
     const falta=Math.max(0, meta-todayFat);
-    setHg('#hgSub', todayFat>=meta ? '🎉 Meta batida! +'+brlShort(todayFat-meta) : 'Faltam '+brlShort(falta));
+    setHg('#hgSub', todayFat>=meta ? 'Meta batida! +'+brlShort(todayFat-meta) : 'Faltam '+brlShort(falta));
   } else {
     $('#hgFill').style.width='0%';
     $('#hgMarker').style.display='none';
@@ -2182,7 +2206,7 @@ function renderLiveSales(){
     </div>`;
   }).join('');
   const hint=$('#liveSalesHint');
-  const todayCount=db.sales.filter(s=>s.date===new Date().toISOString().slice(0,10)).length;
+  const todayCount=db.sales.filter(s=>s.date===today()).length;
   if(hint) hint.textContent=todayCount>0?todayCount+(todayCount===1?' venda hoje':' vendas hoje')+' · '+ordered.length+' mais recentes':'Últimas vendas (manual + webhook)';
 }
 
@@ -2197,7 +2221,7 @@ function refreshDatalists(){
 function renderChart(){
   const c=$('#chart'); c.innerHTML='';
   const months=[];
-  for(let i=5;i>=0;i--){const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);months.push(d);}
+  for(let i=5;i>=0;i--){const d=spNow();d.setDate(1);d.setMonth(d.getMonth()-i);months.push(d);}
   let max=1;
   const data=months.map(d=>{
     const f=db.sales.filter(s=>inMonth(s.date,d)).reduce((a,s)=>a+s.value,0);
@@ -2292,7 +2316,7 @@ function pipeStages(){ return (db.pipeline&&db.pipeline.stages)||[]; }
 function pipeCards(){ return (db.pipeline&&db.pipeline.cards)||[]; }
 function pipeCardById(cid){ return pipeCards().find(c=>c.id===cid); }
 function pipeCardTotals(c){ const log=c.log||[]; const inv=log.reduce((a,e)=>a+(+e.invest||0),0); const rev=log.reduce((a,e)=>a+(+e.revenue||0),0); return {inv,rev,roas:inv>0?rev/inv:0,lucro:rev-inv,days:log.length}; }
-function daysSince(dstr){ if(!dstr) return 0; const d=new Date(dstr+'T12:00'); const t=new Date(); t.setHours(12,0,0,0); return Math.max(1,Math.round((t-d)/864e5)+1); }
+function daysSince(dstr){ if(!dstr) return 0; const d=new Date(dstr+'T12:00'); const t=spNow(); t.setHours(12,0,0,0); return Math.max(1,Math.round((t-d)/864e5)+1); }
 
 function renderProductsView(){ renderProducts(); }
 function renderEsteira(){ renderPipeline(); }
@@ -2410,7 +2434,7 @@ function expensesOf(date){return db.expenses.filter(e=>e.date===date)}
 function adsOf(date){return expensesOf(date).filter(e=>e.cat===ADS)}
 function sum(arr,k){return arr.reduce((a,x)=>a+(+x[k]||0),0)}
 
-function todayYM(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function todayYM(){ const d=spNow(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
 function calShiftMonth(delta){
   const ym=(ui.calYM||todayYM()); const d=new Date(+ym.slice(0,4), +ym.slice(5,7)-1+delta, 1);
   ui.calYM=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
@@ -2424,7 +2448,7 @@ function renderCalendar(){
   const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   const titleEl=$('#calTitle'); if(titleEl) titleEl.textContent=MESES[m]+' '+y;
   const daysInMonth=new Date(y,m+1,0).getDate();
-  const todayStr=new Date().toISOString().slice(0,10);
+  const todayStr=today();
   // monta semanas (domingo=0)
   const weeks=[]; let week=new Array(7).fill(null);
   for(let d=1; d<=daysInMonth; d++){
@@ -2436,11 +2460,11 @@ function renderCalendar(){
     if(d===null) return '<div class="cal-day out"></div>';
     const date=dateISO(y,m,d);
     const sales=salesOf(date), ads=adsOf(date), others=expensesOf(date).filter(e=>e.cat!==ADS);
-    const rec=sum(sales,'value'), gasto=sum(ads,'value');
-    const lucro=rec-gasto;
+    const rec=sum(sales,'value'), gasto=sum(ads,'value'), outros=sum(others,'value');
+    const imposto=gasto*impostoRate();
+    const lucro=rec-gasto-outros-imposto;
     const roas=gasto>0?rec/gasto:0;
     const roi=gasto>0?lucro/gasto*100:0;
-    const imposto=gasto*impostoRate();
     const isToday=date===todayStr;
     const webhookCount=sales.filter(s=>s.source==='webhook').length;
     const hasData=rec>0||gasto>0;
@@ -2497,13 +2521,13 @@ function applyDailyAdSpend(date,value){
 
 function updateCalendarTotals(){
   const ym=(ui.calYM||todayYM());
-  let totalRec=0, totalGasto=0, nVendas=0;
+  let totalRec=0, totalGasto=0, totalOutros=0, nVendas=0;
   db.sales.forEach(s=>{ if(String(s.date).slice(0,7)===ym){ totalRec+=(+s.value||0); nVendas++; } });
-  db.expenses.forEach(e=>{ if(String(e.date).slice(0,7)===ym && e.cat===ADS) totalGasto+=(+e.value||0); });
-  const lucro=totalRec-totalGasto;
+  db.expenses.forEach(e=>{ if(String(e.date).slice(0,7)===ym){ if(e.cat===ADS) totalGasto+=(+e.value||0); else totalOutros+=(+e.value||0); } });
+  const imposto=totalGasto*impostoRate();
+  const lucro=totalRec-totalGasto-totalOutros-imposto;
   const roas=totalGasto>0?totalRec/totalGasto:0;
   const roi=totalGasto>0?lucro/totalGasto*100:0;
-  const imposto=totalGasto*impostoRate();
   const set=(id,val)=>{const el=$(id); if(el) el.textContent=val;};
   set('#calKpiGasto', totalGasto?brlShort(totalGasto):'R$ 0');
   set('#calKpiRec',   totalRec?brlShort(totalRec):'R$ 0');
@@ -2523,10 +2547,10 @@ function closeModal(){
   overlay.classList.remove('show');modal.innerHTML=''
 }
 overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal()});
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>ymd(spNow());
 /* ---- despesas recorrentes (repetem todo mês, sozinhas) ---- */
 function ymOf(s){return String(s).slice(0,7);}
-function curYM(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+function curYM(){const d=spNow();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
 function nextYM(ym){let[y,m]=ym.split('-').map(Number);m++;if(m>12){m=1;y++;}return y+'-'+String(m).padStart(2,'0');}
 function monthsRange(fromYM,toYM){const out=[];if(!fromYM||fromYM>toYM)return out;let c=fromYM,g=0;while(c<=toYM&&g<240){out.push(c);c=nextYM(c);g++;}return out;}
 function clampDayISO(y,m1,day){const last=new Date(y,m1,0).getDate();const d=Math.min(Math.max(day||1,1),last);return y+'-'+String(m1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
@@ -2570,10 +2594,10 @@ function saleModal(editId, mopts){
   const presetDate = s.date || mopts.date || today();
   modal.innerHTML=`<h3>${editId?'Editar venda':'Lançar venda'}</h3>
     <div class="field"><label>Produto</label>
-      <select id="f-prod"><option value="">— selecione —</option><option value="Produtos Geral" ${s.product==='Produtos Geral'?'selected':''}>📦 Produtos Geral · fechamento do dia</option>${opts}<option value="__outro" ${isOther?'selected':''}>Outro (digitar)</option></select>
+      <select id="f-prod"><option value="">— selecione —</option><option value="Produtos Geral" ${s.product==='Produtos Geral'?'selected':''}>Produtos Geral · fechamento do dia</option>${opts}<option value="__outro" ${isOther?'selected':''}>Outro (digitar)</option></select>
       <div class="seg-hint" style="margin-top:6px">Use <b>Produtos Geral</b> pra lançar o faturamento total do dia, sem detalhar por produto.</div></div>
     <div class="field" id="otherWrap" style="display:${isOther?'block':'none'}"><label>Nome do produto</label><input id="f-prodother" list="dl-prodnames" placeholder="Digite o produto" value="${isOther?esc(s.product):''}"></div>
-    <div class="field"><label>Valor recebido (PIX)</label><input id="f-val" type="number" step="0.01" placeholder="0,00" value="${s.value!=null?s.value:''}"></div>
+    <div class="field"><label>Valor recebido (PIX)</label><input id="f-val" type="number" step="0.01" placeholder="0,00" autocomplete="off" name="valor-lancamento" data-1p-ignore data-lpignore="true" value="${s.value!=null?s.value:''}"></div>
     ${pixField}
     <div class="field"><label>Data</label><input id="f-date" type="date" value="${presetDate}"></div>
     <div class="modal-actions"><button class="btn ghost" id="f-cancel">${mopts.after?'Voltar':'Cancelar'}</button><button class="btn" id="f-save">${editId?'Salvar alterações':'Salvar venda'}</button></div>`;
@@ -2620,9 +2644,9 @@ function expModal(editId, mopts){
     ${typeRow}
     <div class="field"><label>Descrição <span class="lbl-opt">(opcional)</span></label><input id="f-desc" list="dl-desc" placeholder="Ex: anúncios, ferramenta..." value="${esc(e.desc||'')}"></div>
     <div class="field"><label>Categoria</label><select id="f-cat">${CATS.map(c=>`<option ${(presetCat||CATS[0])===c?'selected':''}>${c}</option>`).join('')}</select></div>
-    <div class="field"><label>Produto (opcional)</label><select id="f-prod"><option value="">— nenhum —</option><option value="Produtos Geral" ${((e.prod!=null?e.prod:'Produtos Geral'))==='Produtos Geral'?'selected':''}>📦 Produtos Geral</option>${db.products.map(p=>`<option value="${esc(p.name)}" ${e.prod===p.name?'selected':''}>${esc(p.name)}</option>`).join('')}</select>
+    <div class="field"><label>Produto (opcional)</label><select id="f-prod"><option value="">— nenhum —</option><option value="Produtos Geral" ${((e.prod!=null?e.prod:'Produtos Geral'))==='Produtos Geral'?'selected':''}>Produtos Geral</option>${db.products.map(p=>`<option value="${esc(p.name)}" ${e.prod===p.name?'selected':''}>${esc(p.name)}</option>`).join('')}</select>
       <div class="seg-hint" style="margin-top:6px">Pra anúncios de produtos gerais, deixe em <b>Produtos Geral</b>.</div></div>
-    <div class="field"><label>Valor</label><input id="f-val" type="number" step="0.01" placeholder="0,00" value="${e.value!=null?e.value:''}"></div>
+    <div class="field"><label>Valor</label><input id="f-val" type="number" step="0.01" placeholder="0,00" autocomplete="off" name="valor-lancamento" data-1p-ignore data-lpignore="true" value="${e.value!=null?e.value:''}"></div>
     <div class="field"><label id="f-date-lbl">Data</label><input id="f-date" type="date" value="${presetDate}"></div>
     <div class="modal-actions"><button class="btn ghost" id="f-cancel">${mopts.after?'Voltar':'Cancelar'}</button><button class="btn" id="f-save">${editId?'Salvar alterações':'Salvar despesa'}</button></div>`;
   openModal();
@@ -2718,10 +2742,10 @@ function prodModal(editId){
 function dayDetailModal(date){
   const sales=salesOf(date), exps=expensesOf(date), ads=adsOf(date);
   const rec=sum(sales,'value'), gasto=sum(ads,'value'), outros=sum(exps.filter(e=>e.cat!==ADS),'value');
-  const lucro=rec-gasto;
+  const imposto=gasto*impostoRate();
+  const lucro=rec-gasto-outros-imposto;
   const roas=gasto>0?rec/gasto:0;
   const roi=gasto>0?lucro/gasto*100:0;
-  const imposto=gasto*impostoRate();
   const friendly=new Date(date+'T00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
   const reopen=()=>dayDetailModal(date);
   const salesList=sales.length?sales.map(s=>`<div class="day-row" data-edit-sale="${s.id}" data-back="day:${date}">
@@ -3402,7 +3426,7 @@ function renderMetaConn(){
     right=`<button class="btn-fb" data-meta-connect>${FB_SVG} Entrar com Facebook</button>
       <button class="icon-btn" data-meta-settings title="Configurar App ID (uma vez)">${GEAR_SVG}</button>`;
   }
-  const err=metaConn.error?`<div class="mc-err">⚠ ${esc(metaConn.error)}</div>`:'';
+  const err=metaConn.error?`<div class="mc-err"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> ${esc(metaConn.error)}</div>`:'';
   const note=(!metaConn.connected&&!metaConn.error)?(metaConn.appId
     ? `<div class="mc-hint" style="margin-top:8px">Clique em <b>Entrar com Facebook</b> e autorize com sua conta para ver seu gerenciador de anúncios.</div>`
     : `<div class="mc-err" style="margin-top:8px">Falta o <b>App ID</b> (configura uma vez). <a href="#" data-meta-settings>Configurar agora →</a> — é o registro que liga o login, igual a Leona/Utmify.</div>`):'';
@@ -3580,7 +3604,7 @@ function setLiveTab(t){
 
 /* ---- período / vendas Tignfy p/ comparação ---- */
 function metaRangeDates(){
-  const today=new Date(); today.setHours(0,0,0,0);
+  const today=spNow(); today.setHours(0,0,0,0);
   const iso=d=>{const x=new Date(d);x.setHours(12,0,0,0);return x.toISOString().slice(0,10)};
   const t=iso(today);
   switch(metaConn.range){
@@ -3867,7 +3891,7 @@ async function changePassword(){
   if(f) f.addEventListener('change',()=>{
     const n=parseFloat(String(f.value).replace(',','.'));
     if(isNaN(n)||n<0||n>100){ toast('Valor inválido'); f.value=impostoPctVal(); return; }
-    ui.impostoPct=n; saveUI(); render(); toast('Imposto sobre ADS: '+impostoPctLabel());
+    ui.impostoPct=n; saveUI(); render(); renderCalendar(); toast('Imposto sobre ADS: '+impostoPctLabel());
   });
   const eye=$('#cpEye');
   if(eye) eye.addEventListener('click',()=>{
@@ -3876,6 +3900,7 @@ async function changePassword(){
     const lbl=eye.querySelector('span'); if(lbl) lbl.textContent=show?'Ocultar senhas':'Mostrar senhas';
   });
   const save=$('#cpSave'); if(save) save.addEventListener('click', changePassword);
+  const rt=$('#cfgReplayTour'); if(rt) rt.addEventListener('click', ()=>{ try{ startTour(); }catch(e){} });
   try{ applyTheme((typeof ui!=='undefined'&&ui.theme)||'dark'); }catch(e){}
 })();
 /* ----- tab bar inferior + drawer (mobile) ----- */
@@ -3908,8 +3933,8 @@ function syncPeriodBars(){
 function setPeriod(p){
   ui.period=p;
   if(p==='custom' && !ui.periodFrom){
-    const t=new Date(); const fr=new Date(t); fr.setDate(t.getDate()-6);
-    ui.periodFrom=fr.toISOString().slice(0,10); ui.periodTo=t.toISOString().slice(0,10);
+    const t=spNow(); const fr=new Date(t); fr.setDate(t.getDate()-6);
+    ui.periodFrom=ymd(fr); ui.periodTo=ymd(t);
   }
   saveUI(); render(); renderCalendar();
 }
@@ -4011,9 +4036,9 @@ document.body.addEventListener('input',e=>{
   const cell=$(`.cal-day[data-date="${date}"]`);
   if(cell){
     const ads=adsOf(date), sales=salesOf(date), others=expensesOf(date).filter(e=>e.cat!==ADS);
-    const rec=sum(sales,'value'), gasto=sum(ads,'value');
-    const lucro=rec-gasto;
+    const rec=sum(sales,'value'), gasto=sum(ads,'value'), outros=sum(others,'value');
     const imposto=gasto*impostoRate();
+    const lucro=rec-gasto-outros-imposto;
     const lucEl=cell.querySelector('.d-luc');
     lucEl.textContent=(gasto||rec)?brlShort(lucro):'—';
     lucEl.className='d-luc '+(lucro>=0?'pos':'neg');
@@ -4112,7 +4137,7 @@ document.addEventListener('keydown',e=>{
     if(v==='vendas')saleModal();
     else if(v==='despesas')expModal();
     else if(v==='produtos')prodModal();
-    else if(v==='calendario')dayDetailModal(new Date().toISOString().slice(0,10));
+    else if(v==='calendario')dayDetailModal(today());
     else if(v==='cofre'){vTab==='creds'?credModal():vTab==='chips'?chipModal():vTab==='pix'?pixModal():bankModal();}
     else if(v==='metaads' && metaMode!=='live'){mTab==='campaigns'?campaignModal():mTab==='accounts'?accountModal():bmModal();}
   }
@@ -4307,7 +4332,7 @@ function receiveZapWebhook(params){
   const name   = params.name || 'Cliente';
   const number = params.number || '';
   const instance = params.instance || '';
-  const date   = new Date().toISOString().slice(0,10);
+  const date   = today();
   // Register in sales
   const produto = name + (number ? ' · '+number : '');
   const newSale = {id:id(), date, product:produto, value, pixId:'', source:'webhook', createdAt:Date.now()};
@@ -4412,30 +4437,60 @@ function nameModal(isOnboarding){
 /* ===================== GUIA DE PRIMEIRA VEZ (tour interativo) ===================== */
 const TOUR_KEY='tignfy_tour_v1';
 const TOUR_STEPS=[
-  {sel:null,premium:true,title:'Bem-vindo ao Tigudash! 👋',text:'Você tem 7 dias grátis para testar tudo.'},
+  {sel:null,premium:true,title:'Bem-vindo ao Tigudash!',text:'Você tem 7 dias grátis para testar tudo.'},
   {sel:'#nav button[data-v="dash"]',title:'Resumo',text:'Sua visão geral do dia e do período: lucro, vendas, gasto em ADS e ROAS num relance.'},
   {sel:'#nav button[data-v="calendario"]',title:'Diário',text:'Lance a receita e o gasto de cada dia — o painel calcula Lucro, ROAS, ROI e imposto sozinho.'},
+  {sel:'#nav button[data-v="vendas"]',title:'Vendas',text:'Tudo que entra fica registrado aqui, com filtros por produto e por período.'},
   {sel:'#nav button[data-v="despesas"]',title:'Despesas',text:'Gastos pontuais ou recorrentes (que se repetem todo mês, automaticamente).'},
   {sel:'#nav button[data-v="produtos"]',title:'Produtos & Esteira',text:'Cadastre produtos e use a Esteira pra validar do Teste até a Escala — arraste os cards, dia a dia.'},
   {sel:'#nav button[data-v="metaads"]',title:'Meta Ads',text:'Conecte o Facebook e veja suas campanhas ao vivo: investido, ROAS e CPA.'},
-  {sel:'#nav button[data-cofre="creds"]',title:'Cofre',text:'Na seção Cofre: suas contas, chips/WhatsApp, chaves PIX e os dados da empresa — tudo organizado.'},
-  {sel:null,title:'Tudo pronto! 🚀',text:'Explore à vontade. Pra rever este guia, clique no “?” no canto da tela.'}
+  {sel:'#nav button[data-cofre="creds"]',title:'Cofre',text:'Suas contas, chips/WhatsApp, chaves PIX e os dados da empresa — tudo guardado num lugar só.'},
+  {sel:'#nav button[data-v="afiliados"]',title:'Indique e Ganhe',text:'Compartilhe seu link de indicação e ganhe comissão a cada novo assinante que você trouxer.'},
+  {sel:null,title:'Tudo pronto!',text:'Explore à vontade — tudo que você lançar vira relatório automático. Quer rever este guia depois? Vá em <b>Configurações → Rever tutorial</b>.'}
 ];
 /* versão do tour pro mobile: aponta pra barra inferior (o menu lateral fica escondido no drawer) */
 const TOUR_STEPS_MOBILE=[
-  {sel:null,premium:true,title:'Bem-vindo ao Tigudash! 👋',text:'Você tem 7 dias grátis para testar tudo.'},
+  {sel:null,premium:true,title:'Bem-vindo ao Tigudash!',text:'Você tem 7 dias grátis para testar tudo.'},
   {sel:'.mtab-btn[data-v="dash"]',title:'Resumo',text:'Sua visão geral: lucro, vendas, gasto em ADS e a meta do dia.'},
   {sel:'.mtab-btn[data-v="calendario"]',title:'Diário',text:'Seu dia a dia por data — Lucro, ROAS, ROI e imposto calculados sozinhos.'},
   {sel:'.mtab-btn[data-v="vendas"]',title:'Vendas',text:'Tudo que entra, com filtros por produto e por período.'},
   {sel:'.mtab-btn[data-v="despesas"]',title:'Despesas',text:'Tudo que sai: anúncios, ferramentas e taxas — pontual ou recorrente.'},
   {sel:'#mtabMore',title:'Menu "Mais"',text:'Toque aqui pra abrir o menu completo: Produtos, Meta Ads, Cofre, Indique e Ganhe e mais.'},
-  {sel:null,title:'Tudo pronto! 🚀',text:'Explore à vontade — tudo que você lançar vira relatório automático.'}
+  {sel:null,title:'Tudo pronto!',text:'Explore à vontade — tudo que você lançar vira relatório automático. Pra rever este guia, vá em <b>Mais → Configurações → Rever tutorial</b>.'}
 ];
 let tourIdx=0, tourSet=TOUR_STEPS;
-/* mostra SÓ na primeira vez — já marca como visto ao iniciar (não repete nem se não terminar) */
-function maybeStartTour(){ try{ if(!localStorage.getItem(TOUR_KEY)){ localStorage.setItem(TOUR_KEY,'1'); setTimeout(startTour,700); } }catch(e){} }
+/* ===== Tutorial: SÓ no primeiro acesso após o cadastro =====
+   A flag de "já viu" mora na CONTA (db.account.tourSeen) e sobe pro Supabase via save(),
+   então NÃO repete a cada login nem ao entrar de outro dispositivo. Admin nunca vê.
+   O localStorage (TOUR_KEY) continua como reforço e compatibilidade com contas antigas. */
+function hasSeenTour(){
+  try{ if(db && db.account && db.account.tourSeen) return true; }catch(e){}
+  try{ if(localStorage.getItem(TOUR_KEY)) return true; }catch(e){}
+  return false;
+}
+function tourHasActivity(){ /* conta que já tem lançamentos não é primeiro acesso */
+  try{ return !!(db && ((db.sales&&db.sales.length)||(db.products&&db.products.length)||(db.expenses&&db.expenses.length))); }catch(e){ return false; }
+}
+function markTourSeen(){
+  try{ localStorage.setItem(TOUR_KEY,'1'); }catch(e){}
+  try{
+    if(db){
+      if(!db.account || typeof db.account!=='object') db.account={};
+      if(!db.account.tourSeen){ db.account.tourSeen=true; if(typeof save==='function') save(); } /* persiste na conta (Supabase) */
+    }
+  }catch(e){}
+}
+function maybeStartTour(){
+  try{
+    if(typeof isAdmin!=='undefined' && isAdmin) return;     // admin não vê o tutorial
+    if(hasSeenTour()){ markTourSeen(); return; }             // já viu antes → garante a flag na conta e sai
+    if(tourHasActivity()){ markTourSeen(); return; }         // conta antiga com dados → não é 1º acesso
+    markTourSeen();                                          // 1º acesso após cadastro → marca e mostra 1x
+    setTimeout(startTour,700);
+  }catch(e){}
+}
 function startTour(){ tourIdx=0; tourSet=(window.innerWidth<=860)?TOUR_STEPS_MOBILE:TOUR_STEPS; renderTourStep(); }
-function endTour(){ try{ localStorage.setItem(TOUR_KEY,'1'); }catch(e){} const o=$('#tourOverlay'); if(o) o.remove(); }
+function endTour(){ markTourSeen(); const o=$('#tourOverlay'); if(o) o.remove(); }
 function renderTourStep(){
   const step=tourSet[tourIdx]; if(!step){ endTour(); return; }
   let o=$('#tourOverlay');
@@ -4466,9 +4521,9 @@ function renderTourStep(){
       <button class="tour-x" data-tour="skip" aria-label="Fechar">✕</button>
       <div class="tw-badge"><svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6z"/></svg> ACESSO PREMIUM LIBERADO</div>
       <div class="tw-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg></div>
-      <h3>${first?('Bem-vindo, '+esc(first)+'! 👋'):'Bem-vindo ao Tigudash! 👋'}</h3>
+      <h3>${first?('Bem-vindo, '+esc(first)+'!'):'Bem-vindo ao Tigudash!'} <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg></h3>
       <p>${first?('<b>'+esc(first)+'</b>, você'):'Você'} ganhou <b>7 dias grátis</b> pra explorar o Tigudash sem limites. Bora começar?</p>
-      <div class="tw-days"><span class="n">7</span><span class="l">dias grátis<br>liberados ✨</span></div>
+      <div class="tw-days"><span class="n">7</span><span class="l">dias grátis<br>liberados <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5A2 2 0 0 0 15.5 9.94l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg></span></div>
       <div class="tour-actions">
         <button class="tour-skip" data-tour="skip">Pular guia</button>
         <button class="btn small" data-tour="next">Começar →</button>
@@ -4649,7 +4704,7 @@ function renderTrialBadge(){
 /* ----- tela de login / cadastro ----- */
 let authMode='login';
 function showAuthGate(){ renderAuthGate('login',''); }
-function hideAuthGate(){ const g=$('#authGate'); if(g) g.classList.remove('show'); }
+function hideAuthGate(){ const g=$('#authGate'); if(g){ g.classList.remove('show'); /* limpa email/senha pra o Chrome não oferecer "salvar senha" ao lançar valores depois */ try{ g.querySelectorAll('input').forEach(i=>{ i.value=''; }); }catch(e){} } }
 function renderAuthGate(mode,msg){
   authMode=mode||'login';
   let g=$('#authGate'); if(!g){ g=document.createElement('div'); g.id='authGate'; document.body.appendChild(g);}
@@ -4821,7 +4876,7 @@ function renderAffiliates(){
   const rel=ts=>{ if(!ts)return'—'; try{ return new Date(ts).toLocaleDateString('pt-BR'); }catch(e){return'—';} };
   const next=REF_TIERS.find(t=>total<t.n);
   const prog=next?Math.min(100,Math.round(total/next.n*100)):100;
-  const progLbl=next?`${total} de ${next.n} para “${esc(next.label)}”`:'Todas as metas concluídas! 🎉';
+  const progLbl=next?`${total} de ${next.n} para “${esc(next.label)}”`:'Todas as metas concluídas!';
   const waMsg=encodeURIComponent(`Tô usando o Tigudash pra controlar minhas finanças de infoproduto e recomendo demais! Cria sua conta grátis com meu link: ${link}`);
   const giftSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>';
   const tiers=REF_TIERS.map(t=>{
@@ -4835,7 +4890,7 @@ function renderAffiliates(){
       <td class="c">${r.active?'<span class="pill on">ativo</span>':'<span class="pill off">cadastrado</span>'}</td>
       <td class="num r ${r.active?'pos':''}">${r.active?brlShort(REF_REWARD):'—'}</td>
       <td class="c">${rel(r.joined)}</td>
-    </tr>`).join('')||'<tr><td colspan="4" class="empty" style="text-align:center;padding:22px">Você ainda não tem indicados. Compartilhe seu link e comece a ganhar! 🚀</td></tr>';
+    </tr>`).join('')||'<tr><td colspan="4" class="empty" style="text-align:center;padding:22px">Você ainda não tem indicados. Compartilhe seu link e comece a ganhar!</td></tr>';
   body.innerHTML=`
     <div class="ref-hero">
       <div class="ref-badge">${giftSvg} Programa de indicação</div>
@@ -4941,7 +4996,7 @@ async function renderAdmin(){
       return { id:u.user_id, email:u.email||'—', username:(d.account&&d.account.username)||'', updated:u.updated_at, nsales:sales.length, fat, gasto, lucro:fat-gasto, isMe:u.user_id===authUser.id, admin:isAdminRow, role:hasExtra?(u.role||'user'):'user', rejected:hasExtra?!!u.rejected:false, sub, approved, needsApproval:hasApprovedCol };
     });
     adminRenderUsers(body, users, 'supa');
-    if(!hasApprovedCol){ const n=body.querySelector('.admin-note'); if(n) n.innerHTML='⚠️ Rode o <b>SQL do trial/aprovação</b> no Supabase pra ativar o controle de acesso e o botão de aceitar cadastros.'; }
+    if(!hasApprovedCol){ const n=body.querySelector('.admin-note'); if(n) n.innerHTML='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> Rode o <b>SQL do trial/aprovação</b> no Supabase pra ativar o controle de acesso e o botão de aceitar cadastros.'; }
   }catch(e){ body.innerHTML='<div class="empty">Não foi possível carregar os usuários.<br><small>Confira as policies (RLS) e se seu e-mail é o ADMIN_EMAIL.</small></div>'; }
 }
 async function adminApprove(userId){
@@ -5049,8 +5104,9 @@ function adminRenderUsers(body, users, mode){
   const rowHtml = u => {
     const isPending = u.needsApproval && !u.approved && !u.admin && !u.rejected;
     const nameCell = `<td class="ml-name"><div class="mln-t">${u.username?('@'+esc(u.username)):esc(u.email)}${u.admin?' <span class="utag adm" title="Dono">dono</span>':(u.role==='admin'?' <span class="role-tag">adm equipe</span>':(u.role==='parceiro'?' <span class="role-tag parc">parceiro</span>':''))}${u.isMe?' <span class="utag me" title="Você">você</span>':''}</div>${u.username?`<div style="font-size:11px;color:var(--faint);margin-top:1px">${esc(u.email)}</div>`:''}</td>`;
+    const isAdm = u.admin || u.role==='admin';
     const act = !supaMode ? `<td class="c">${rel(u.updated)}</td>`
-      : `<td class="c">${u.rejected?'<span class="pill danger">recusado</span>':(isPending?'<span class="pill warn">pendente</span>':subPill(u.sub))}</td><td class="c">${u.admin?'<span class="utag adm">dono</span>':`<button class="btn ghost mini" data-manage="${esc(u.id)}" data-email="${esc(u.email)}" data-pending="${isPending?'1':''}" data-role="${esc(u.role||'user')}">Gerenciar</button>`}</td>`;
+      : `<td class="c">${isAdm?'<span class="pill on" title="Admin — acesso total, sem plano/assinatura">acesso total</span>':(u.rejected?'<span class="pill danger">recusado</span>':(isPending?'<span class="pill warn">pendente</span>':subPill(u.sub)))}</td><td class="c">${u.admin?'<span class="utag adm">dono</span>':`<button class="btn ghost mini" data-manage="${esc(u.id)}" data-email="${esc(u.email)}" data-pending="${isPending?'1':''}" data-role="${esc(u.role||'user')}">Gerenciar</button>`}</td>`;
     return `<tr${isPending?' class="row-pending"':''}>${nameCell}<td class="num r">${u.nsales||'—'}</td><td class="num r pos">${u.fat?brlShort(u.fat):'—'}</td><td class="num r neg">${u.gasto?brlShort(u.gasto):'—'}</td><td class="num r ${u.lucro>=0?'pos':'neg'}">${(u.fat||u.gasto)?brlShort(u.lucro):'—'}</td>${act}</tr>`;
   };
   const headExtra = supaMode ? '<th class="ml-th c">Plano</th><th class="ml-th c">Ação</th>' : '<th class="ml-th c">Criado</th>';
@@ -5061,7 +5117,7 @@ function adminRenderUsers(body, users, mode){
     const admins=users.filter(u=>u.admin||u.role==='admin');
     const parceiros=users.filter(u=>!u.admin&&u.role==='parceiro');
     const regular=users.filter(u=>!u.admin&&u.role!=='admin'&&u.role!=='parceiro');
-    tablesHtml = `<div class="admin-group-h">👑 Admins de equipe <span class="gc">${admins.length}</span></div>${table(admins)}<div class="admin-group-h">🤝 Parceiros <span class="gc">${parceiros.length}</span></div>${table(parceiros)}<div class="admin-group-h">🙋 Usuários <span class="gc">${regular.length}</span></div>${table(regular)}`;
+    tablesHtml = `<div class="admin-group-h"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.18 5.5a.5.5 0 0 1 .8.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .799-.519L7.09 9.165a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg> Admins de equipe <span class="gc">${admins.length}</span></div>${table(admins)}<div class="admin-group-h"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Parceiros <span class="gc">${parceiros.length}</span></div>${table(parceiros)}<div class="admin-group-h"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Usuários <span class="gc">${regular.length}</span></div>${table(regular)}`;
   } else tablesHtml = table(users);
   body.innerHTML=`
     <div class="meta-kpis" style="margin-bottom:18px">

@@ -3513,7 +3513,9 @@ function metaHandleErr(e){
   }
   else if(e&&(e.code===10||e.code===200||e.code===100)){ msg='Permissão de leitura (ads_read) negada. No app em modo Desenvolvimento, só você (admin) e pessoas adicionadas como Testadores conseguem ver os dados. Para clientes, é preciso App Review do Meta.'; }
   else if(e&&e.message){ msg=e.message; }
-  metaConn.error=msg;
+  const dbg=e?(' · [debug code='+(e.code!=null?e.code:'?')+(e.error_subcode!=null?('/'+e.error_subcode):'')+': '+String(e.message||'').slice(0,140)+']'):'';
+  metaConn.error=msg+dbg;
+  if(metaConn.token){ try{ fbApi('/me/permissions').then(p=>{ const g=((p&&p.data)||[]).filter(x=>x.status==='granted').map(x=>x.permission).join(', '); metaConn.error=msg+' · [permissões concedidas: '+(g||'NENHUMA')+']'+dbg; renderMetaConn(); }).catch(()=>{}); }catch(_){} }
 }
 function parseInsights(row){
   row=row||{};

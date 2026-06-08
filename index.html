@@ -1851,7 +1851,7 @@ function checkoutUrl(){
   }catch(e){}
   return url;
 }
-const REQUIRE_APPROVAL = true;         // novos cadastros precisam ser aceitos por você no Admin
+const REQUIRE_APPROVAL = false;        // novos cadastros já entram com 7 dias grátis (sem aprovação do admin)
 let subState = null, authAccessUntil = null, authApproved = false, authRole = 'user', authRejected = false;
 const ENABLE_LOGIN = true;
 const AUTH_MODE = SUPA_ENABLED ? 'supa' : (ENABLE_LOGIN ? 'local' : 'none');

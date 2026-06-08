@@ -1329,8 +1329,8 @@
         <!-- URL box terminal-style -->
         <div style="background:var(--bg);border:1px solid rgba(188,232,74,.18);border-radius:12px;padding:16px 18px;font-family:'JetBrains Mono',monospace;font-size:12.5px;word-break:break-all;line-height:2;position:relative">
           <div style="font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;border-bottom:1px solid var(--border2);padding-bottom:8px">ENDPOINT · <span style="color:#6bd49a;font-weight:700">GET</span></div>
-          <span style="color:var(--muted)">https://tigudash.app/webhook/</span><span id="zapTokenSpan" style="color:var(--accent);font-weight:700;background:rgba(188,232,74,.07);padding:1px 4px;border-radius:4px">••••••••••••</span><br>
-          <span style="color:var(--faint)">?valor=</span><span style="color:var(--green)">R${valor}</span>
+          <span style="color:var(--muted)">https://mazcikaibqlyqtwzozzg.supabase.co/functions/v1/zap-webhook?token=</span><span id="zapTokenSpan" style="color:var(--accent);font-weight:700;background:rgba(188,232,74,.07);padding:1px 4px;border-radius:4px">••••••••••••</span><br>
+          <span style="color:var(--faint)">&amp;valor=</span><span style="color:var(--green)">R${valor}</span>
           <span style="color:var(--faint)">&amp;number=</span><span style="color:var(--green)">{phone_number}</span>
           <span style="color:var(--faint)">&amp;name=</span><span style="color:var(--green)">{first_name}</span>
           <span style="color:var(--faint)">&amp;instance=</span><span style="color:var(--green)">{instance_number}</span>
@@ -4249,7 +4249,10 @@ function genToken(len=32){
 function loadZapConfig(){
   let cfg={};
   try{ const r=localStorage.getItem(ZAP_CFG_KEY); if(r) cfg=JSON.parse(r); }catch(e){}
-  zapToken = cfg.token || genToken();
+  /* o token mora na CONTA (sincroniza no Supabase) — é por ele que a Edge Function te encontra */
+  const acctTok = (db && db.account && db.account.zapToken) ? db.account.zapToken : '';
+  zapToken = acctTok || cfg.token || genToken();
+  try{ if(db){ if(!db.account||typeof db.account!=='object') db.account={}; if(db.account.zapToken!==zapToken){ db.account.zapToken=zapToken; if(typeof save==='function') save(); } } }catch(e){}
   const cur = $('#whCurrency');
   if(cur && cfg.currency) cur.value = cfg.currency;
   saveZapConfig();
@@ -4264,9 +4267,10 @@ function saveZapConfig(){
 function regenZapToken(){
   if(!confirm('Gerar um novo token invalida o link anterior. Confirmar?')) return;
   zapToken = genToken();
+  try{ if(db){ if(!db.account||typeof db.account!=='object') db.account={}; db.account.zapToken=zapToken; if(typeof save==='function') save(); } }catch(e){}
   saveZapConfig();
   renderZapLink();
-  toast('Novo token gerado ✓');
+  toast('Novo token gerado ✓ — atualize o link no seu chatbot');
 }
 
 function renderZapLink(){
@@ -4278,12 +4282,13 @@ function renderZapLink(){
   updateWhDot();
 }
 
+function zapBase(){ return SUPABASE_URL+'/functions/v1/zap-webhook?token='+zapToken; }
 function getZapFullLink(){
-  return 'https://tigudash.app/webhook/'+zapToken+'?valor=R%24%7Bvalor%7D&number=%7Bphone_number%7D&name=%7Bfirst_name%7D&instance=%7Binstance_number%7D';
+  return zapBase()+'&valor=R%24%7Bvalor%7D&number=%7Bphone_number%7D&name=%7Bfirst_name%7D&instance=%7Binstance_number%7D';
 }
 
 function getZapReadableLink(){
-  return 'https://tigudash.app/webhook/'+zapToken+'?valor=R${valor}&number={phone_number}&name={first_name}&instance={instance_number}';
+  return zapBase()+'&valor=R${valor}&number={phone_number}&name={first_name}&instance={instance_number}';
 }
 
 function copyZapLink(){
@@ -4323,27 +4328,20 @@ function updateWhDot(){
   const cnt=$('#whFeedCount'); if(cnt) cnt.textContent = whFeedCount+' recebida(s)';
 }
 
-/* ── Incoming webhook handler (called when URL is hit) ─────────────────────── */
+/* ── Simulação local (botão "Simular envio") — cria uma venda de teste ─────── */
 function receiveZapWebhook(params){
-  // params: {valor, number, name, instance, token}
-  if(params.token && params.token !== zapToken){ toast('Token inválido'); return; }
   const rawVal = (params.valor||'0').replace(/[^0-9.,]/g,'').replace(',','.');
   const value  = parseFloat(rawVal)||0;
   const name   = params.name || 'Cliente';
   const number = params.number || '';
   const instance = params.instance || '';
-  const date   = today();
-  // Register in sales
-  const produto = name + (number ? ' · '+number : '');
-  const newSale = {id:id(), date, product:produto, value, pixId:'', source:'webhook', createdAt:Date.now()};
+  const newSale = {id:'wh_sim_'+Date.now(), date:today(), product:(params.product||name||'Venda (webhook)'), value, source:'webhook', name, number, instance, createdAt:Date.now()};
   db.sales.push(newSale);
   save();
   render(); renderCalendar();
   if(ui.view==='vendas') renderSalesFiltered();
-  // Add to feed
-  whFeedCount++;
-  addWhFeedItem({type:'sale', name, number, instance, value, date, time:new Date()});
-  toast('Venda ao vivo recebida: '+brl(value));
+  renderWhFeed();
+  notifyWebhookSale({value, name, number});
 }
 
 /* ── Simulate (for testing) ─────────────────────────────────────────────────── */
@@ -4362,48 +4360,92 @@ function addWhFeedItem(item){
   renderWhFeed();
 }
 
+function whSalesList(){ return (db.sales||[]).filter(s=>s.source==='webhook').sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)); }
 function renderWhFeed(){
+  const list = whSalesList();
+  whFeedCount = list.length;
   const feed = $('#whFeed');
-  if(!feed) return;
+  if(!feed){ updateWhDot(); return; }
   const empty = $('#whFeedEmpty');
-  if(empty) empty.style.display = whFeedItems.length ? 'none' : 'block';
-  // remove old dynamic items
+  if(empty) empty.style.display = list.length ? 'none' : 'block';
   feed.querySelectorAll('.wh-item').forEach(el=>el.remove());
   const frag = document.createDocumentFragment();
-  whFeedItems.forEach((item,idx)=>{
-    const t = item.time ? item.time.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '—';
+  list.slice(0,100).forEach((s)=>{
+    const t = s.createdAt ? new Date(s.createdAt).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
     const div = document.createElement('div');
     div.className='wh-item success';
     div.style.cssText='margin:0 10px;border-radius:8px;padding:10px 14px;background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,.05);animation:fade .3s ease';
     div.innerHTML=`
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:JetBrains Mono,monospace;font-size:12px">
-        <span style="color:var(--faint);min-width:64px">[${t}]</span>
-        <span style="background:rgba(107,212,154,.15);color:var(--green);font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;letter-spacing:.05em">POST 200</span>
-        <span style="color:var(--accent);font-weight:700">/webhook/••••</span>
-        <span style="color:var(--muted)">·</span>
-        <span style="color:var(--text);font-weight:600">${esc(item.name||'—')}</span>
-        ${item.number ? '<span style="color:var(--faint)">· <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg> '+esc(item.number)+'</span>' : ''}
-        <span style="margin-left:auto;color:var(--green);font-weight:700">+${brl(item.value||0)}</span>
+        <span style="color:var(--faint);min-width:52px">${t}</span>
+        <span style="background:rgba(107,212,154,.15);color:var(--green);font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;letter-spacing:.05em">GET 200</span>
+        <span style="color:var(--text);font-weight:600">${esc(s.name||s.product||'—')}</span>
+        ${s.number ? '<span style="color:var(--faint)">· '+esc(s.number)+'</span>' : ''}
+        <span style="margin-left:auto;color:var(--green);font-weight:700">+${brl(s.value||0)}</span>
       </div>
-      <div style="font-size:10.5px;color:var(--faint);margin-top:3px;margin-left:74px;font-family:JetBrains Mono,monospace">
-        valor=${brl(item.value||0)}${item.instance ? ' · instance='+esc(item.instance) : ''} · ${item.date||''}
+      <div style="font-size:10.5px;color:var(--faint);margin-top:3px;margin-left:62px;font-family:JetBrains Mono,monospace">
+        valor=${brl(s.value||0)}${s.instance ? ' · instance='+esc(s.instance) : ''} · ${s.date||''}
       </div>`;
     frag.appendChild(div);
   });
   feed.appendChild(frag);
-  // update quick metrics
   const rc=$('#wh-req-count'); if(rc) rc.textContent=whFeedCount;
-  const ls=$('#wh-last-status');
-  if(ls){ls.textContent=whFeedItems.length?'200':'—';ls.style.color=whFeedItems.length?'var(--green)':'var(--faint)';}
-  const lv=$('#wh-last-valor');
-  if(lv&&whFeedItems.length){lv.textContent=brl(whFeedItems[0].value||0);lv.style.color='var(--green)';}
+  const ls=$('#wh-last-status'); if(ls){ls.textContent=list.length?'200':'—';ls.style.color=list.length?'var(--green)':'var(--faint)';}
+  const lv=$('#wh-last-valor'); if(lv&&list.length){lv.textContent=brl(list[0].value||0);lv.style.color='var(--green)';}
   updateWhDot();
 }
 
-function clearWhFeed(){ whFeedItems=[]; whFeedCount=0; renderWhFeed(); updateWhDot(); toast('Feed limpo'); }
+function clearWhFeed(){ renderWhFeed(); }
+
+/* ── Recepção REAL: lê as vendas que a Edge Function gravou na tabela webhook_sales ── */
+function whDateSP(iso){ try{ return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo'}).format(new Date(iso)); }catch(e){ return today(); } }
+function notifyWebhookSale(s){
+  const v=brl(+((s&&s.value)||0));
+  try{ toast('Nova venda recebida: '+v+((s&&s.name)?(' — '+s.name):'')); }catch(e){}
+  try{ if(typeof Notification!=='undefined' && Notification.permission==='granted'){ new Notification('Tigudash — Nova venda 💰', { body: v+((s&&s.name)?(' · '+s.name):'') }); } }catch(e){}
+}
+let _whPollTimer=null;
+async function pollWebhookSales(){
+  try{
+    if(typeof supa==='undefined' || !supa || !authUser) return;
+    const { data, error } = await supa.from('webhook_sales')
+      .select('id,value,name,number,instance,product,email,created_at')
+      .eq('user_id', authUser.id).order('id',{ascending:true}).limit(300);
+    if(error || !data) return;
+    if(!db.account||typeof db.account!=='object') db.account={};
+    if(!Array.isArray(db.account.whSeen)) db.account.whSeen=[];
+    const seen=new Set(db.account.whSeen);
+    const novos=data.filter(r=>!seen.has(r.id));
+    if(!novos.length) return;
+    let added=0,last=null;
+    novos.forEach(r=>{
+      seen.add(r.id); db.account.whSeen.push(r.id);
+      const sid='wh_'+r.id;
+      if((db.sales||[]).some(s=>s.id===sid)) return;
+      db.sales.push({ id:sid, date:whDateSP(r.created_at), value:+r.value||0, product:(r.product||r.name||'Venda (webhook)'), source:'webhook', name:r.name||'', number:r.number||'', instance:r.instance||'', email:r.email||'', createdAt: r.created_at?new Date(r.created_at).getTime():Date.now() });
+      added++; last=r;
+    });
+    if(db.account.whSeen.length>3000) db.account.whSeen=db.account.whSeen.slice(-3000);
+    if(added>0){
+      save(); render(); renderCalendar();
+      if(ui.view==='vendas') renderSalesFiltered();
+      renderWhFeed();
+      notifyWebhookSale(last);
+    }
+  }catch(e){}
+}
+function startWebhookPolling(){
+  if(_whPollTimer) return;
+  try{ pollWebhookSales(); }catch(e){}
+  _whPollTimer=setInterval(pollWebhookSales, 12000);
+}
 
 /* init webhook on view switch */
-function initWebhookView(){ loadZapConfig(); renderWhFeed(); }
+function initWebhookView(){
+  loadZapConfig(); renderWhFeed();
+  try{ if(typeof Notification!=='undefined' && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+  pollWebhookSales();
+}
 
 /* ---- nome do usuário (cadastro simples, salvo junto do db) ---- */
 function getProfileName(){ return (db.profile && db.profile.name) ? db.profile.name : ''; }
@@ -4549,6 +4591,7 @@ function bootApp(){
   setupAccountUI();
   if(isAdmin) enableAdminUI();
   maybeStartTour();
+  startWebhookPolling();
 }
 function emptyDb(){ return {products:[],sales:[],expenses:[],recurring:[],vault:{creds:[],chips:[],pix:[],company:{},banks:[]},meta:{bms:[],accounts:[],campaigns:[]},profile:{}}; }
 

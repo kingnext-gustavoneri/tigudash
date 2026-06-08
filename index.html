@@ -3513,9 +3513,7 @@ function metaHandleErr(e){
   }
   else if(e&&(e.code===10||e.code===200||e.code===100)){ msg='Permissão de leitura (ads_read) negada. No app em modo Desenvolvimento, só você (admin) e pessoas adicionadas como Testadores conseguem ver os dados. Para clientes, é preciso App Review do Meta.'; }
   else if(e&&e.message){ msg=e.message; }
-  const dbg=e?(' · [debug code='+(e.code!=null?e.code:'?')+(e.error_subcode!=null?('/'+e.error_subcode):'')+': '+String(e.message||'').slice(0,140)+']'):'';
-  metaConn.error=msg+dbg;
-  if(metaConn.token){ try{ fbApi('/me/permissions').then(p=>{ const g=((p&&p.data)||[]).filter(x=>x.status==='granted').map(x=>x.permission).join(', '); metaConn.error=msg+' · [permissões concedidas: '+(g||'NENHUMA')+']'+dbg; renderMetaConn(); }).catch(()=>{}); }catch(_){} }
+  metaConn.error=msg;
 }
 function parseInsights(row){
   row=row||{};
@@ -3602,6 +3600,7 @@ function setLiveTab(t){
   liveTab=t; ui.liveTab=t; liveFilter.status='all'; saveUI();
   renderMetaLive();
   if(LEVEL_CFG[t] && liveLoaded[t]!==metaToken && metaConn.connected) metaEnsureLevel(t);
+  else if(t==='report' && liveLoaded.campaigns!==metaToken && metaConn.connected) metaEnsureLevel('campaigns');
 }
 
 /* ---- período / vendas Tignfy p/ comparação ---- */
@@ -3737,34 +3736,71 @@ function liveBMsTableHTML(){
   }).join('');
   return `<div class="ml-table-wrap"><table class="ml"><thead><tr><th class="ml-th">Business Manager</th><th class="ml-th c">Status</th><th class="ml-th r">Contas</th></tr></thead><tbody>${body}</tbody></table></div>`;
 }
+function liveReportHTML(){
+  const rows=(liveData.campaigns||[]).slice();
+  if(!rows.length) return `<div class="empty">${metaConn.loading?'<span class="mc-spin"></span> Carregando relatório…':(metaConn.connected?'Nada encontrado neste período.':'Conecte sua conta do Facebook para ver o relatório.')}</div>`;
+  const cur=rows[0].currency||'BRL';
+  const T=rows.reduce((t,r)=>{t.spend+=(r.spend||0);t.purchVal+=(r.purchVal||0);t.purch+=(r.purch||0);t.leads+=(r.leads||0);t.convs+=(r.convs||0);t.clicks+=(r.clicks||0);t.impressions+=(r.impressions||0);return t;},{spend:0,purchVal:0,purch:0,leads:0,convs:0,clicks:0,impressions:0});
+  const profit=T.purchVal-T.spend, roas=T.spend>0?T.purchVal/T.spend:0, cpa=T.purch>0?T.spend/T.purch:0, cpl=T.leads>0?T.spend/T.leads:0;
+  const tg=metaTignfySalesInRange();
+  const fmtN=n=>Math.round(n||0).toLocaleString('pt-BR');
+  const kpi=(lbl,val,sub,cls)=>`<div class="meta-kpi"><div class="mk-lbl">${lbl}</div><div class="mk-val ${cls||''}">${val}</div><div class="mk-sub">${sub}</div></div>`;
+  const kpis=`<div class="meta-kpis" style="margin-bottom:16px">
+    ${kpi('Faturamento',money(T.purchVal,cur),'valor de compra','pos')}
+    ${kpi('Investido',money(T.spend,cur),'gasto com anúncios','neg')}
+    ${kpi('Lucro',money(profit,cur),'faturamento − investido',profit>=0?'pos':'neg')}
+    ${kpi('ROAS médio',T.spend>0?roas.toFixed(2)+'x':'—','retorno s/ investido',T.spend>0?(roas>=1?'pos':'neg'):'')}
+    ${kpi('Compras',fmtN(T.purch),'vendas atribuídas','')}
+    ${kpi('CPA médio',T.purch>0?money(cpa,cur):'—','custo por compra','')}
+    ${kpi('Conversas',fmtN(T.convs),'iniciadas','')}
+    ${kpi('Custo/lead',T.leads>0?money(cpl,cur):'—','por cadastro','')}
+    ${kpi('Cliques',fmtN(T.clicks),'no link','')}
+    ${kpi('Impressões',fmtN(T.impressions),'exibições','')}
+  </div>`;
+  const note=`<div style="font-size:12px;color:var(--faint);margin:-4px 0 16px">${rows.length} campanha(s) no período · Vendas registradas no Tigudash: <b style="color:var(--muted)">${tg.count}</b> (${brl(tg.value)})</div>`;
+  const byAcc={};
+  rows.forEach(r=>{ const k=r.accountId||r.accountName||'—'; if(!byAcc[k]) byAcc[k]={name:r.accountName||k,spend:0,purchVal:0,purch:0}; const a=byAcc[k]; a.spend+=(r.spend||0); a.purchVal+=(r.purchVal||0); a.purch+=(r.purch||0); });
+  const accList=Object.values(byAcc).sort((a,b)=>(b.purchVal-b.spend)-(a.purchVal-a.spend));
+  const accRows=accList.map(a=>{ const p=a.purchVal-a.spend, rs=a.spend>0?a.purchVal/a.spend:0; return `<tr>
+    <td class="ml-name"><div class="mln-t">${esc(a.name)}</div></td>
+    <td class="num r pos">${a.purchVal?money(a.purchVal,cur):'—'}</td>
+    <td class="num r neg">${a.spend?money(a.spend,cur):'—'}</td>
+    <td class="num r ${p>=0?'pos':'neg'}">${money(p,cur)}</td>
+    <td class="num r" style="color:${a.spend>0?(rs>=1?'var(--green)':'var(--red)'):'var(--faint)'}">${a.spend>0?rs.toFixed(2)+'x':'—'}</td>
+    <td class="num r">${a.purch?fmtN(a.purch):'—'}</td></tr>`; }).join('');
+  const accTable=`<div style="font-size:12.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 10px">Por conta de anúncio (${accList.length})</div>
+    <div class="ml-table-wrap"><table class="ml">
+    <thead><tr><th class="ml-th">Conta de anúncio</th><th class="ml-th r">Faturamento</th><th class="ml-th r">Investido</th><th class="ml-th r">Lucro</th><th class="ml-th r">ROAS</th><th class="ml-th r">Compras</th></tr></thead>
+    <tbody>${accRows}</tbody></table></div>`;
+  return kpis+note+accTable;
+}
 function renderMetaBody(){
   const b=$('#mlBody'); if(!b) return;
-  if(liveTab==='accounts') b.innerHTML=liveAccountsTableHTML();
-  else if(liveTab==='bms') b.innerHTML=liveBMsTableHTML();
-  else b.innerHTML=liveMetricTableHTML(liveTab);
+  if(liveTab==='report') b.innerHTML=liveReportHTML();
+  else b.innerHTML=liveMetricTableHTML('campaigns');
 }
 function renderMetaLive(){
   const el=$('#metaLive'); if(!el || metaMode!=='live') return;
+  if(liveTab!=='campaigns'&&liveTab!=='report') liveTab='campaigns';
   const periodPills=METARANGES.map(r=>`<button data-metarange="${r.k}" class="${metaConn.range===r.k?'on':''}">${r.l}</button>`).join('');
   const accOpts=`<option value="all">Todas as contas</option>`+(liveData.accounts||[]).map(a=>`<option value="${a.id}" ${liveFilter.account===a.id?'selected':''}>${esc(a.name)}</option>`).join('');
   const lvlKey=LEVEL_CFG[liveTab]?liveTab:'campaigns';
   const stSet=Array.from(new Set((liveData[lvlKey]||[]).map(r=>r.status))).filter(Boolean);
   const stOpts=`<option value="all">Todos os status</option>`+stSet.map(s=>`<option value="${esc(s)}" ${liveFilter.status===s?'selected':''}>${esc(s)}</option>`).join('');
   const updated=metaConn.lastFetch?`<span class="ml-updated">Atualizado ${metaRelTime(metaConn.lastFetch)}</span>`:'';
-  const counts=lvl=>LEVEL_CFG[lvl]?(liveData[lvl]||[]).length:(lvl==='accounts'?(liveData.accounts||[]).length:(liveData.bms||[]).length);
-  const tabs=[['campaigns','Campanhas'],['adsets','Conjuntos'],['ads','Anúncios'],['accounts','Contas'],['bms','BMs']]
-    .map(([k,l])=>`<button data-livetab="${k}" class="${liveTab===k?'on':''}">${l} <b>${counts(k)}</b></button>`).join('');
+  const counts=lvl=>LEVEL_CFG[lvl]?(liveData[lvl]||[]).length:'';
+  const tabs=[['campaigns','Campanhas'],['report','Relatório']]
+    .map(([k,l])=>`<button data-livetab="${k}" class="${liveTab===k?'on':''}">${l}${counts(k)!==''?` <b>${counts(k)}</b>`:''}</button>`).join('');
   const showFilters=!!LEVEL_CFG[liveTab];
   let bodyHTML;
-  if(metaConn.loading && !(liveData[liveTab]||[]).length) bodyHTML=`<div class="empty"><span class="mc-spin"></span> Carregando dados do Facebook…</div>`;
-  else if(liveTab==='accounts') bodyHTML=liveAccountsTableHTML();
-  else if(liveTab==='bms') bodyHTML=liveBMsTableHTML();
-  else bodyHTML=liveMetricTableHTML(liveTab);
+  if(metaConn.loading && !(liveData.campaigns||[]).length) bodyHTML=`<div class="empty"><span class="mc-spin"></span> Carregando dados do Facebook…</div>`;
+  else if(liveTab==='report') bodyHTML=liveReportHTML();
+  else bodyHTML=liveMetricTableHTML('campaigns');
   el.innerHTML=`
     <div class="ml-toolbar">
       <div class="period-pills">${periodPills}</div>
       ${showFilters?`<select class="ml-sel" id="mlAccount">${accOpts}</select><select class="ml-sel" id="mlStatus">${stOpts}</select>`:''}
-      <span class="search-wrap ml-search"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="mlSearch" placeholder="Buscar nome, conta, status…" value="${esc(liveFilter.search||'')}"></span>
+      ${showFilters?`<span class="search-wrap ml-search"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="mlSearch" placeholder="Buscar nome, conta, status…" value="${esc(liveFilter.search||'')}"></span>`:''}
       <span class="ml-toolend">${updated}<button class="btn ghost small" data-meta-refresh>↻ Atualizar</button></span>
     </div>
     <div class="ml-tabs">${tabs}</div>
@@ -3822,7 +3858,7 @@ function switchView(v){
     calendario:['Diário','Seu dia a dia por data — lucro, ROAS e imposto calculados sozinhos.'],
     config:['Configurações','Tema do painel, imposto sobre anúncios e preferências da sua conta.'],
     cofre:['Cofre','Suas contas, chips e chaves PIX de contingência, salvos neste dispositivo.'],
-    metaads:['Meta Ads','Acompanhe suas campanhas, contas de anúncio e BMs — investimento, retorno e ROAS num lugar só.'],
+    metaads:['Meta Ads','Acompanhe suas campanhas — faturamento, investido, lucro e ROAS num lugar só.'],
     admin:['Administração','Todos os usuários do sistema — visão geral de contas, faturamento e atividade.'],
     afiliados:['Indique e Ganhe','Compartilhe seu link, convide amigos para o Tigudash e acompanhe quanto você já ganhou.'],
     webhook:['Webhook de Vendas','Notificações instantâneas de venda via webhook — configure, teste e acompanhe ao vivo.']};

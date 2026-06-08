@@ -3478,7 +3478,7 @@ async function metaConnect(){
       } else {
         metaConn.loading=false; metaConn.connected=false; metaConn.error='Login não concluído ou permissão de leitura (ads_read) negada.'; renderMetaConn();
       }
-    },{scope:'ads_read',return_scopes:true});
+    },{scope:'ads_read',return_scopes:true,auth_type:'rerequest'});
   };
   if(window.FB && metaConn._inited){ doLogin(); return; }
   metaConn.loading=true; renderMetaConn();

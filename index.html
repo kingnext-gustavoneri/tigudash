@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tigudash — Controle Financeiro</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYzhlZjU4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjYTRkNTMxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTUiIGZpbGw9InVybCgjZykiLz48cmVjdCB4PSIxNSIgeT0iMTkiIHdpZHRoPSIzNCIgaGVpZ2h0PSI5IiByeD0iNC41IiBmaWxsPSIjMGEwYjBlIi8+PHJlY3QgeD0iMjcuNSIgeT0iMTkiIHdpZHRoPSI5IiBoZWlnaHQ9IjI4IiByeD0iNC41IiBmaWxsPSIjMGEwYjBlIi8+PC9zdmc+">
-<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYzhlZjU4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjYTRkNTMxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTUiIGZpbGw9InVybCgjZykiLz48cmVjdCB4PSIxNSIgeT0iMTkiIHdpZHRoPSIzNCIgaGVpZ2h0PSI5IiByeD0iNC41IiBmaWxsPSIjMGEwYjBlIi8+PHJlY3QgeD0iMjcuNSIgeT0iMTkiIHdpZHRoPSI5IiBoZWlnaHQ9IjI4IiByeD0iNC41IiBmaWxsPSIjMGEwYjBlIi8+PC9zdmc+">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <meta name="theme-color" content="#0a0b0e">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -725,7 +726,7 @@
     .aside-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:120;opacity:0;pointer-events:none;transition:opacity .26s}
     body.drawer-open .aside-backdrop{opacity:1;pointer-events:auto}
     /* MAIN ocupa a tela toda + espaço reservado pra tab bar de baixo */
-    main{padding:16px 15px calc(78px + env(safe-area-inset-bottom,0px));max-width:100%;margin:0;min-width:0;overflow-x:hidden}
+    main{padding:16px 15px calc(88px + env(safe-area-inset-bottom,0px));max-width:100%;margin:0;min-width:0;overflow-x:hidden}
     .topbar{align-items:flex-start;margin-bottom:18px} .topbar h2{font-size:23px}
     .grid2{grid-template-columns:1fr}
     /* qualquer tabela/área larga rola sozinha em vez de esticar a página */
@@ -735,14 +736,14 @@
     .mtabbar{display:flex;flex-direction:row;position:fixed;left:0;right:0;bottom:0;z-index:110;
       background:rgba(13,15,20,.97);
       border-top:1px solid var(--border);justify-content:space-around;align-items:stretch;
-      padding:7px 4px calc(7px + env(safe-area-inset-bottom,0px))}
+      padding:14px 4px calc(9px + env(safe-area-inset-bottom,0px))}
     .mtab-btn{flex:1 1 0;min-width:0;background:none;border:none;color:var(--faint);font:inherit;cursor:pointer;
       display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;border-radius:12px;transition:color .15s,transform .1s}
     .mtab-btn svg{width:23px;height:23px}
     .mtab-btn span{font-size:10px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;line-height:1}
     .mtab-btn.on{color:var(--accent)}
     .mtab-btn:active{transform:scale(.9)}
-    .tour-help{bottom:calc(76px + env(safe-area-inset-bottom,0px));right:14px}
+    .tour-help{bottom:calc(86px + env(safe-area-inset-bottom,0px));right:14px}
   }
   /* monitores grandes / ultra-wide — usa melhor o espaço */
   @media(min-width:1700px){

@@ -3533,7 +3533,7 @@ function parseInsights(row){
 }
 async function metaFetchAccounts(){
   try{ metaConn.user=await fbApi('/me',{fields:'name'}); }catch(e){}
-  const resp=await fbApi('/me/adaccounts',{fields:'account_id,name,account_status,currency,spend_cap,business',limit:200});
+  const resp=await fbApi('/me/adaccounts',{fields:'account_id,name,account_status,currency,spend_cap',limit:200});
   const list=(resp&&resp.data)||[];
   const bms={}; const accounts=[];
   list.forEach(a=>{

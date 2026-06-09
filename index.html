@@ -4579,14 +4579,30 @@ function updateNotifyBtn(){
   else if(p==='unsupported'){ b.style.display='none'; }
   else { b.innerHTML=BELL+' Ativar notificações'; b.style.background='var(--accent)'; b.style.color='#0a0b0e'; b.style.cursor='pointer'; b.title=''; }
 }
+const VAPID_PUBLIC='BD1LvJZKR-MCnGJhwjsMKb240MWYfx-LZFv8WfK3JCkRolQYhz4-S_LZv3R361eMNfl-WrJMlt2j62yg1xnTkHw';
+function urlB64ToUint8(b64){ const pad='='.repeat((4-b64.length%4)%4); const s=(b64+pad).replace(/-/g,'+').replace(/_/g,'/'); const raw=atob(s); const arr=new Uint8Array(raw.length); for(let i=0;i<raw.length;i++) arr[i]=raw.charCodeAt(i); return arr; }
+async function subscribePush(){
+  try{
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+    const reg=await navigator.serviceWorker.register('sw.js');
+    await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){ sub=await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:urlB64ToUint8(VAPID_PUBLIC)}); }
+    const j=sub.toJSON();
+    if(!db.account) db.account={};
+    if(!Array.isArray(db.account.pushSubs)) db.account.pushSubs=[];
+    if(!db.account.pushSubs.some(s=>s&&s.endpoint===j.endpoint)){ db.account.pushSubs.push(j); save(); if(typeof supaFlush==='function') supaFlush(); }
+    return true;
+  }catch(e){ return false; }
+}
 function askNotifyPermission(){
   try{
     if(typeof Notification==='undefined'){ toast('Seu navegador não suporta notificações'); return; }
-    if(Notification.permission==='granted'){ toast('Notificações já estão ativas ✓'); updateNotifyBtn(); return; }
+    if(Notification.permission==='granted'){ subscribePush(); toast('Notificações já estão ativas ✓'); updateNotifyBtn(); return; }
     if(Notification.permission==='denied'){ toast('Notificações bloqueadas — libere no cadeado do navegador e recarregue'); updateNotifyBtn(); return; }
     Notification.requestPermission().then(p=>{
       updateNotifyBtn();
-      if(p==='granted'){ try{ new Notification('Tigudash', {body:'Notificações ativadas! Você será avisado a cada nova venda.'}); }catch(e){} toast('Notificações ativadas ✓'); }
+      if(p==='granted'){ subscribePush().then(ok=>{ try{ new Notification('Tigudash', {body: ok?'Notificações ativadas! Você será avisado a cada venda, mesmo com o site fechado.':'Notificações ativadas (enquanto o site estiver aberto).'}); }catch(e){} }); toast('Notificações ativadas ✓'); }
       else toast('Permissão não concedida');
     }).catch(()=>{});
   }catch(e){}
@@ -4594,6 +4610,7 @@ function askNotifyPermission(){
 function initWebhookView(){
   loadZapConfig(); renderWhFeed();
   updateNotifyBtn();
+  try{ if(typeof Notification!=='undefined' && Notification.permission==='granted') subscribePush(); }catch(e){}
   pollWebhookSales();
 }
 
@@ -4742,6 +4759,7 @@ function bootApp(){
   if(isAdmin) enableAdminUI();
   maybeStartTour();
   startWebhookPolling();
+  try{ if(typeof Notification!=='undefined' && Notification.permission==='granted') subscribePush(); }catch(e){}
 }
 function emptyDb(){ return {products:[],sales:[],expenses:[],recurring:[],vault:{creds:[],chips:[],pix:[],company:{},banks:[]},meta:{bms:[],accounts:[],campaigns:[]},profile:{}}; }
 

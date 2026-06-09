@@ -3963,7 +3963,7 @@ function switchView(v){
   ui.view=v; saveUI();
   syncPeriodBars();
   if(v==='cofre') renderVault();
-  if(v==='calendario') renderCalendar();
+  if(v==='calendario'){ renderCalendar(); try{ if(typeof metaConn!=='undefined'&&metaConn.connected) metaSyncAdSpend(true); }catch(e){} }
   if(v==='vendas') renderSalesFiltered();
   if(v==='despesas'){ renderAdsSync(); if(metaConn.connected) metaSyncAdSpend(true); }
   if(v==='webhook') initWebhookView();

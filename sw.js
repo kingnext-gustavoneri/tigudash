@@ -11,9 +11,6 @@ self.addEventListener('push', event => {
     body: data.body || 'Você recebeu uma nova venda!',
     icon: 'icon-192.png',
     badge: 'icon-192.png',
-    vibrate: [120, 60, 120],
-    tag: data.tag || ('venda-' + Date.now()),
-    renotify: true,
     data: { url: data.url || '/' }
   };
   event.waitUntil(self.registration.showNotification(title, options));

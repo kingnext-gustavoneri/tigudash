@@ -669,6 +669,9 @@
   .btn-fb{background:#1877F2;color:#fff;border:none;border-radius:10px;padding:9px 15px;font:inherit;font-weight:600;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.15s}
   .btn-fb:hover{filter:brightness(1.08)}
   .btn-fb svg.ic{width:16px;height:16px}
+  .ads-chip{background:var(--bg);border:1px solid var(--border);color:var(--muted);border-radius:999px;padding:7px 13px;font:inherit;font-size:12.5px;font-weight:500;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+  .ads-chip.on{background:rgba(188,232,74,.13);border-color:rgba(188,232,74,.45);color:var(--accent)}
+  .ads-chip:hover{border-color:var(--accent-dim)}
   .mc-err{margin-top:8px;font-size:12.5px;color:var(--red);background:rgba(240,121,95,.08);border:1px solid rgba(240,121,95,.2);border-radius:10px;padding:8px 12px}
   .mc-err a{color:var(--accent)}
   .mc-ro{margin-top:8px;font-size:11.5px;color:var(--faint);display:flex;align-items:center;gap:6px}
@@ -1478,6 +1481,7 @@
         <div class="meta-kpi"><div class="mk-lbl">Outras despesas</div><div class="mk-val neg" id="ek-other">R$ 0</div><div class="mk-sub">ferramentas, taxas, equipe…</div></div>
         <div class="meta-kpi"><div class="mk-lbl">Total geral</div><div class="mk-val neg" id="ek-total">R$ 0</div><div class="mk-sub">despesas + imposto sobre ADS</div></div>
       </div>
+      <div id="adsSyncCard" style="margin-bottom:16px"></div>
       <div class="sec-head">
         <div class="hint" id="expCount" style="margin:0">—</div>
         <button class="btn" id="addExp">+ Lançar despesa</button>
@@ -2153,6 +2157,7 @@ function render(){
   renderLiveSales();
   renderSalesFiltered();
   renderExpenses(rangeExps);
+  try{ renderAdsSync(); }catch(e){}
   renderProducts();
   refreshDatalists();
   /* Despesas: ADS já somado com o imposto (igual à planilha) */
@@ -2284,11 +2289,14 @@ function renderSales(sales){
 function renderExpenses(exps){
   const b=$('#expBody'); const sorted=[...exps].sort((a,b)=>b.date.localeCompare(a.date));
   $('#expEmpty').style.display=sorted.length?'none':'block';
-  b.innerHTML=sorted.map(e=>`<tr class="clickable" data-edit-exp="${e.id}">
-    <td class="num">${fmtD(e.date)}</td><td>${e.desc?esc(e.desc):'<span class="cell-dash">—</span>'}${e.recurId?' <span class="rec-tag" title="Despesa recorrente — repete todo mês">↻</span>':''}</td>
+  b.innerHTML=sorted.map(e=>{
+    const isMeta=e.source==='meta';
+    return `<tr class="${isMeta?'':'clickable'}"${isMeta?'':` data-edit-exp="${e.id}"`}>
+    <td class="num">${fmtD(e.date)}</td><td>${e.desc?esc(e.desc):'<span class="cell-dash">—</span>'}${isMeta?' <span class="rec-tag" title="Sincronizado do Facebook — atualiza sozinho" style="background:rgba(24,119,242,.16);color:#5aa0f0;border-color:rgba(24,119,242,.3)">Facebook</span>':''}${e.recurId?' <span class="rec-tag" title="Despesa recorrente — repete todo mês">↻</span>':''}</td>
     <td><span class="tag">${esc(e.cat)}</span>${e.prod?` <span class="tag" style="background:rgba(188,232,74,.1);color:var(--accent-dim)">${esc(e.prod)}</span>`:''}</td>
     <td class="num neg" style="text-align:right">-${brl(e.value)}</td>
-    <td style="text-align:right"><button class="del" data-del-exp="${e.id}"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></td></tr>`).join('');
+    <td style="text-align:right">${isMeta?'':`<button class="del" data-del-exp="${e.id}"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`}</td></tr>`;
+  }).join('');
 }
 function renderProducts(){
   const b=$('#prodBody');
@@ -3594,6 +3602,73 @@ async function metaRefreshAll(){
   }catch(e){ metaHandleErr(e); }
   metaConn.loading=false;
   renderMetaConn(); renderMetaLive();
+  try{ metaSyncAdSpend(true); }catch(e){}
+}
+/* ===== Gasto do Facebook → Despesas (contas selecionáveis, tempo real) ===== */
+function adsSelectedAccountIds(){
+  const all=(liveData.accounts||[]).map(a=>a.id);
+  const sel=(db.account&&Array.isArray(db.account.adsAccounts))?db.account.adsAccounts:null;
+  return sel===null?all:all.filter(id=>sel.includes(id));
+}
+let _adsSyncing=false;
+async function metaSyncAdSpend(silent){
+  if(_adsSyncing) return;
+  if(!metaConn.connected || !metaConn.token){ renderAdsSync(); return; }
+  if(!(liveData.accounts||[]).length){ renderAdsSync(); return; } /* contas ainda não carregadas — não zera o que já existe */
+  if(silent && db.account && db.account.adsSyncAt && (Date.now()-db.account.adsSyncAt)<30000){ renderAdsSync(); return; }
+  const selIds=adsSelectedAccountIds();
+  const chosen=(liveData.accounts||[]).filter(a=>selIds.includes(a.id));
+  _adsSyncing=true; if(!silent) renderAdsSync(true);
+  const byDay={};
+  for(const acc of chosen){
+    try{
+      const r=await fbApi('/'+acc.id+'/insights',{fields:'spend',time_increment:1,date_preset:'this_month',limit:400});
+      ((r&&r.data)||[]).forEach(row=>{ const d=row.date_start; if(d) byDay[d]=(byDay[d]||0)+(+row.spend||0); });
+    }catch(e){}
+  }
+  db.expenses=(db.expenses||[]).filter(e=>e.source!=='meta');
+  Object.keys(byDay).forEach(d=>{ const v=Math.round((byDay[d])*100)/100; if(v>0) db.expenses.push({id:'metaads_'+d,date:d,desc:'Anúncios (Facebook)',cat:'Tráfego / Anúncios',value:v,source:'meta'}); });
+  if(!db.account) db.account={};
+  db.account.adsSyncAt=Date.now();
+  _adsSyncing=false;
+  save(); try{ render(); renderCalendar(); }catch(e){}
+  renderAdsSync();
+  if(!silent) toast('Gasto do Facebook sincronizado ✓');
+}
+function toggleAdsAccount(id){
+  if(!db.account) db.account={};
+  let sel=Array.isArray(db.account.adsAccounts)?db.account.adsAccounts.slice():(liveData.accounts||[]).map(a=>a.id);
+  if(sel.includes(id)) sel=sel.filter(x=>x!==id); else sel.push(id);
+  db.account.adsAccounts=sel; save(); renderAdsSync(); metaSyncAdSpend(true);
+}
+function renderAdsSync(loading){
+  const el=$('#adsSyncCard'); if(!el) return;
+  if(!metaConn.connected){
+    el.innerHTML=`<div class="card" style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px"><div style="font-weight:600;font-size:14px">Gasto com anúncios em tempo real</div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:2px">Conecte o Facebook em <b>Meta Ads</b> pra puxar o gasto automaticamente pra cá.</div></div>
+      <button class="btn" onclick="switchView('metaads')">Conectar no Meta Ads</button></div>`;
+    return;
+  }
+  const accts=(liveData.accounts||[]);
+  const selIds=adsSelectedAccountIds();
+  const total=(db.expenses||[]).filter(e=>e.source==='meta').reduce((a,e)=>a+(+e.value||0),0);
+  const when=(db.account&&db.account.adsSyncAt)?metaRelTime(db.account.adsSyncAt):'agora';
+  const chips=accts.length?accts.map(a=>{ const on=selIds.includes(a.id); return `<button class="ads-chip${on?' on':''}" onclick="toggleAdsAccount('${a.id}')">${on?'✓ ':''}${esc(a.name)}</button>`; }).join(''):'<span style="font-size:12.5px;color:var(--faint)">Nenhuma conta encontrada. Abra o Meta Ads e clique em Atualizar.</span>';
+  el.innerHTML=`<div class="card" style="padding:16px 18px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="flex:1;min-width:200px">
+        <div style="font-weight:600;font-size:14px">Gasto com anúncios (Facebook) · tempo real</div>
+        <div style="font-size:12.5px;color:var(--muted);margin-top:2px">Marque as contas que entram no gasto. O total vira despesa automática (Tráfego / Anúncios).</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--red)">-${brl(total)}</div>
+        <div style="font-size:11px;color:var(--faint)">este mês · atualizado ${when}</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">${chips}</div>
+    <button class="btn ghost small" onclick="metaSyncAdSpend()" ${loading?'disabled':''}>${loading?'<span class="mc-spin"></span> Sincronizando…':'↻ Sincronizar agora'}</button>
+  </div>`;
 }
 async function metaEnsureLevel(level){
   if(!LEVEL_CFG[level] || !metaConn.connected) return;
@@ -3883,6 +3958,7 @@ function switchView(v){
   if(v==='cofre') renderVault();
   if(v==='calendario') renderCalendar();
   if(v==='vendas') renderSalesFiltered();
+  if(v==='despesas'){ renderAdsSync(); if(metaConn.connected) metaSyncAdSpend(true); }
   if(v==='webhook') initWebhookView();
   if(v==='metaads'){ renderMeta(); if(metaMode==='live') metaCheckStatus(); }
   if(v==='admin') renderAdmin();

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Tigudash — Controle Financeiro</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYzhlZjU4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjYTRkNTMxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTUiIGZpbGw9InVybCgjZykiLz48cmVjdCB4PSI5IiB5PSIxMyIgd2lkdGg9IjQ2IiBoZWlnaHQ9IjEyIiByeD0iNiIgZmlsbD0iIzBhMGIwZSIvPjxyZWN0IHg9IjI2IiB5PSIxMyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjQwIiByeD0iNiIgZmlsbD0iIzBhMGIwZSIvPjwvc3ZnPg==">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -734,7 +734,7 @@
     .aside-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:120;opacity:0;pointer-events:none;transition:opacity .26s}
     body.drawer-open .aside-backdrop{opacity:1;pointer-events:auto}
     /* MAIN ocupa a tela toda + espaço reservado pra tab bar de baixo */
-    main{padding:16px 15px calc(88px + env(safe-area-inset-bottom,0px));max-width:100%;margin:0;min-width:0;overflow-x:hidden}
+    main{padding:calc(16px + env(safe-area-inset-top,0px)) 15px calc(88px + env(safe-area-inset-bottom,0px));max-width:100%;margin:0;min-width:0;overflow-x:hidden}
     .topbar{align-items:flex-start;margin-bottom:18px} .topbar h2{font-size:23px}
     .grid2{grid-template-columns:1fr}
     /* qualquer tabela/área larga rola sozinha em vez de esticar a página */
@@ -744,10 +744,10 @@
     .mtabbar{display:flex;flex-direction:row;position:fixed;left:0;right:0;bottom:0;z-index:110;
       background:rgba(13,15,20,.97);
       border-top:1px solid var(--border);justify-content:space-around;align-items:stretch;
-      padding:14px 4px calc(9px + env(safe-area-inset-bottom,0px))}
+      padding:15px 4px calc(10px + env(safe-area-inset-bottom,0px))}
     .mtab-btn{flex:1 1 0;min-width:0;background:none;border:none;color:var(--faint);font:inherit;cursor:pointer;
-      display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;border-radius:12px;transition:color .15s,transform .1s}
-    .mtab-btn svg{width:23px;height:23px}
+      display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;border-radius:12px;transition:color .15s,transform .1s}
+    .mtab-btn svg{width:25px;height:25px}
     .mtab-btn span{font-size:10px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;line-height:1}
     .mtab-btn.on{color:var(--accent)}
     .mtab-btn:active{transform:scale(.9)}
@@ -1922,7 +1922,7 @@ try{
 function loadUI(){try{return JSON.parse(localStorage.getItem(UIKEY))||{}}catch(e){return {}}}
 function saveUI(){try{localStorage.setItem(UIKEY,JSON.stringify(ui));}catch(e){}}
 /* ---- Imposto sobre ADS (editável, padrão 12,5%) ---- */
-function impostoPctVal(){ const v=parseFloat(typeof ui!=='undefined'&&ui.impostoPct); return (isFinite(v)&&v>=0&&v<=100)?v:12.5; }
+function impostoPctVal(){ let v=NaN; try{ if(typeof db!=='undefined'&&db&&db.account&&db.account.impostoPct!=null) v=parseFloat(db.account.impostoPct); }catch(e){} if(!(isFinite(v)&&v>=0&&v<=100)){ try{ v=parseFloat(typeof ui!=='undefined'&&ui&&ui.impostoPct); }catch(e){} } return (isFinite(v)&&v>=0&&v<=100)?v:12.5; }
 function impostoRate(){ return impostoPctVal()/100; }
 function impostoPctLabel(){ return String(impostoPctVal()).replace('.',',')+'%'; }
 /* a edição do imposto vive em Configurações: leva o usuário até o campo e destaca o card */
@@ -4024,7 +4024,7 @@ async function changePassword(){
   if(f) f.addEventListener('change',()=>{
     const n=parseFloat(String(f.value).replace(',','.'));
     if(isNaN(n)||n<0||n>100){ toast('Valor inválido'); f.value=impostoPctVal(); return; }
-    ui.impostoPct=n; saveUI(); render(); renderCalendar(); toast('Imposto sobre ADS: '+impostoPctLabel());
+    ui.impostoPct=n; saveUI(); if(!db.account)db.account={}; db.account.impostoPct=n; save(); render(); renderCalendar(); toast('Imposto sobre ADS: '+impostoPctLabel());
   });
   const eye=$('#cpEye');
   if(eye) eye.addEventListener('click',()=>{
@@ -4759,6 +4759,7 @@ function renderTourStep(){
 
 /* ===================== AUTENTICAÇÃO + MULTIUSUÁRIO + ADMIN (Supabase) ===================== */
 function bootApp(){
+  try{ if(db){ if(!db.account)db.account={}; if(db.account.impostoPct==null && typeof ui!=='undefined'&&ui&&ui.impostoPct!=null){ db.account.impostoPct=parseFloat(ui.impostoPct); save(); } } }catch(e){}
   initVault(); initMeta(); initPipeline(); materializeRecurring();
   renderBrandName(); render(); renderCalendar();
   switchView(ui.view&&document.getElementById('v-'+ui.view)?ui.view:'dash');

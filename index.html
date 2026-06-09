@@ -1922,7 +1922,7 @@ try{
 function loadUI(){try{return JSON.parse(localStorage.getItem(UIKEY))||{}}catch(e){return {}}}
 function saveUI(){try{localStorage.setItem(UIKEY,JSON.stringify(ui));}catch(e){}}
 /* ---- Imposto sobre ADS (editável, padrão 12,5%) ---- */
-function impostoPctVal(){ let v=NaN; try{ if(typeof db!=='undefined'&&db&&db.account&&db.account.impostoPct!=null) v=parseFloat(db.account.impostoPct); }catch(e){} if(!(isFinite(v)&&v>=0&&v<=100)){ try{ v=parseFloat(typeof ui!=='undefined'&&ui&&ui.impostoPct); }catch(e){} } return (isFinite(v)&&v>=0&&v<=100)?v:12.5; }
+function impostoPctVal(){ let v=NaN; try{ if(typeof db!=='undefined'&&db&&db.account&&db.account.impostoPct!=null) v=parseFloat(db.account.impostoPct); }catch(e){} if(!(isFinite(v)&&v>=0&&v<=100)){ try{ v=parseFloat(typeof ui!=='undefined'&&ui&&ui.impostoPct); }catch(e){} } return (isFinite(v)&&v>=0&&v<=100)?v:14; }
 function impostoRate(){ return impostoPctVal()/100; }
 function impostoPctLabel(){ return String(impostoPctVal()).replace('.',',')+'%'; }
 /* a edição do imposto vive em Configurações: leva o usuário até o campo e destaca o card */
@@ -3184,9 +3184,9 @@ let liveSort={col:'spend',dir:'desc'};
 let liveFilter={account:'all',status:'all',search:'',bm:'all'};
 const META_TAX_PCT=14; // imposto (%) sobre o gasto de anúncios, descontado por BM no Relatório
 function bmOf(name){ const m=String(name||'').match(/BM\s*0*(\d+)/i); return m?('BM '+m[1]):'Sem BM'; }
-function metaTaxPct(){ try{ const v=parseFloat(db&&db.account&&db.account.metaTaxPct); if(isFinite(v)&&v>=0&&v<=100) return v; }catch(e){} return META_TAX_PCT; }
+function metaTaxPct(){ return impostoPctVal(); } /* unificado: mesmo imposto do painel todo */
 function metaImposto(spend){ return (+spend||0)*metaTaxPct()/100; }
-function setMetaTaxPct(){ const cur=metaTaxPct(); const v=prompt('Imposto sobre o gasto dos anúncios (%) — usado no Relatório por BM:', String(cur).replace('.',',')); if(v==null) return; const n=parseFloat(String(v).replace(',','.')); if(!isFinite(n)||n<0||n>100){ toast('Valor inválido'); return; } if(!db.account)db.account={}; db.account.metaTaxPct=n; save(); try{ renderMeta(); }catch(e){} toast('Imposto do Meta Ads: '+String(n).replace('.',',')+'%'); }
+function setMetaTaxPct(){ const cur=metaTaxPct(); const v=prompt('Imposto sobre o gasto dos anúncios (%) — usado em todo o painel:', String(cur).replace('.',',')); if(v==null) return; const n=parseFloat(String(v).replace(',','.')); if(!isFinite(n)||n<0||n>100){ toast('Valor inválido'); return; } if(!db.account)db.account={}; db.account.impostoPct=n; if(typeof ui!=='undefined') ui.impostoPct=n; save(); try{ render(); renderCalendar(); renderMeta(); }catch(e){} toast('Imposto sobre anúncios: '+String(n).replace('.',',')+'%'); }
 let metaToken=0;
 const liveLoaded={campaigns:0,adsets:0,ads:0};
 function MD(){return metaMode==='live'?liveData:metaData;}
@@ -4769,8 +4769,11 @@ function bootApp(){
   if(isAdmin) enableAdminUI();
   maybeStartTour();
   startWebhookPolling();
+  startAdSpendSync();
   try{ if(typeof Notification!=='undefined' && Notification.permission==='granted') subscribePush(); }catch(e){}
 }
+let _adSpendTimer=null;
+function startAdSpendSync(){ if(_adSpendTimer) return; _adSpendTimer=setInterval(()=>{ try{ if(typeof metaConn!=='undefined'&&metaConn.connected) metaSyncAdSpend(true); }catch(e){} }, 180000); }
 function emptyDb(){ return {products:[],sales:[],expenses:[],recurring:[],vault:{creds:[],chips:[],pix:[],company:{},banks:[]},meta:{bms:[],accounts:[],campaigns:[]},profile:{}}; }
 
 function loadSupabaseSDK(){

@@ -4583,7 +4583,7 @@ const VAPID_PUBLIC='BD1LvJZKR-MCnGJhwjsMKb240MWYfx-LZFv8WfK3JCkRolQYhz4-S_LZv3R3
 function urlB64ToUint8(b64){ const pad='='.repeat((4-b64.length%4)%4); const s=(b64+pad).replace(/-/g,'+').replace(/_/g,'/'); const raw=atob(s); const arr=new Uint8Array(raw.length); for(let i=0;i<raw.length;i++) arr[i]=raw.charCodeAt(i); return arr; }
 async function subscribePush(verbose){
   try{
-    if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)){ if(verbose) toast('Este navegador não suporta push'); return false; }
+    if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)){ if(verbose) alert('Este navegador/dispositivo não suporta push (Service Worker/PushManager ausente).'); return false; }
     const reg=await navigator.serviceWorker.register('sw.js');
     await navigator.serviceWorker.ready;
     let sub=await reg.pushManager.getSubscription();
@@ -4593,9 +4593,9 @@ async function subscribePush(verbose){
     if(!Array.isArray(db.account.pushSubs)) db.account.pushSubs=[];
     if(!db.account.pushSubs.some(s=>s&&s.endpoint===j.endpoint)) db.account.pushSubs.push(j);
     save(); if(typeof supaFlush==='function') supaFlush();
-    if(verbose) toast('Aparelho inscrito no push ✓ — já pode fechar o site!');
+    if(verbose) alert('PUSH OK ✓\nAparelho inscrito.\nInscrições salvas: '+db.account.pushSubs.length+'\nEndpoint: '+String(j.endpoint||'').slice(0,55)+'…\n\nAguarde ~5s e me avise que vou testar.');
     return true;
-  }catch(e){ if(verbose){ try{ toast('Push falhou: '+((e&&e.message)||e)); }catch(_){} } return false; }
+  }catch(e){ if(verbose){ alert('PUSH FALHOU ❌\n'+((e&&e.name)||'Erro')+': '+((e&&e.message)||e)); } return false; }
 }
 function askNotifyPermission(){
   try{
